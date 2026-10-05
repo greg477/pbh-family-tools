@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Allowance" />
+<meta name="theme-color" content="#0E1116" />
+<title>Allowance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0E1116; --bg2:#151A22; --panel:#1A212C; --panel-hi:#222B39; --line:rgba(255,255,255,.08);
+    --text:#EAF0F7; --muted:#8A97AB;
+    --money:#34D399; --money-deep:#059669; --money-wash:rgba(52,211,153,.12);
+    --fine:#FBBF24; --fine-deep:#B45309;
+    --viol:#FB7185; --viol-deep:#9F1239;
+    --shadow:0 14px 40px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{font-family:"Inter",system-ui,sans-serif;color:var(--text);
+    background-color:var(--bg);
+    background-image:radial-gradient(120% 60% at 50% -10%, #1A2230 0%, var(--bg) 60%);
+    background-attachment:fixed; min-height:100dvh;}
+  .grotesk{font-family:"Space Grotesk",system-ui,sans-serif;}
+  .ledger{font-family:"Space Mono",monospace;}
+  .app{max-width:560px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));min-height:100dvh;display:flex;flex-direction:column;}
+
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+  .who{display:flex;align-items:center;gap:9px;overflow:hidden;}
+  .who .nm{font-family:"Space Grotesk";font-weight:600;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .weekpill{font-size:.76rem;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:4px 10px;border-radius:999px;white-space:nowrap;}
+  .gear{background:var(--panel);border:1px solid var(--line);color:var(--muted);width:44px;height:44px;border-radius:13px;font-size:1.2rem;display:grid;place-items:center;cursor:pointer;flex:0 0 auto;}
+  .gear:active{transform:scale(.94);}
+  .synced{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
+  .synced .d{width:7px;height:7px;border-radius:50%;background:var(--muted);}
+  .synced.live .d{background:var(--money);box-shadow:0 0 8px var(--money);}
+
+  /* balance hero */
+  .hero{position:relative;border-radius:22px;padding:24px 22px 20px;margin-bottom:14px;overflow:hidden;
+    background:linear-gradient(180deg,var(--panel-hi),var(--panel));border:1px solid var(--line);box-shadow:var(--shadow);}
+  .hero .cap{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+  .amount{font-family:"Space Mono";font-weight:700;font-size:3.7rem;line-height:1;margin:8px 0 2px;color:var(--money);letter-spacing:-1px;}
+  .amount.bump{animation:bump .4s cubic-bezier(.2,1.4,.4,1);}
+  .amount .cts{font-size:2rem;opacity:.8;}
+  @keyframes bump{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+  .ofbase{font-size:.9rem;color:var(--muted);}
+  .fx{position:absolute;inset:0;pointer-events:none;overflow:visible;}
+  .float{position:absolute;left:22px;top:52px;font-family:"Space Mono";font-weight:700;font-size:1.4rem;padding:2px 10px;border-radius:8px;animation:fl 1.1s ease-out forwards;}
+  .float.up{color:#04241a;background:var(--money);} .float.down{color:#2a1400;background:var(--fine);}
+  @keyframes fl{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-40px)}}
+  .barwrap{height:11px;background:rgba(0,0,0,.35);border-radius:999px;overflow:hidden;margin:14px 0 6px;border:1px solid var(--line);}
+  .bar{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,var(--money-deep),var(--money));transition:width .45s ease;}
+  .bar.mid{background:linear-gradient(90deg,var(--fine-deep),var(--fine));}
+  .bar.low{background:linear-gradient(90deg,var(--viol-deep),var(--viol));}
+
+  /* meters row */
+  .meters{display:flex;gap:10px;margin-bottom:18px;}
+  .meter{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px 14px;}
+  .meter .ml{font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+  .meter .mv{font-family:"Space Grotesk";font-weight:600;font-size:1.15rem;margin-top:4px;}
+  .capdots{display:flex;gap:5px;margin-top:8px;}
+  .capdot{width:100%;height:7px;border-radius:3px;background:rgba(255,255,255,.1);}
+  .capdot.used{background:var(--fine);}
+  /* tally sticks */
+  .tally{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;align-items:flex-end;min-height:26px;}
+  .tgroup{position:relative;display:flex;gap:3px;height:22px;align-items:flex-end;}
+  .tgroup .s{width:2.5px;height:22px;background:var(--viol);border-radius:2px;}
+  .tgroup.five::after{content:"";position:absolute;left:-3px;right:-3px;top:50%;height:2.5px;background:var(--viol);transform:rotate(-18deg);border-radius:2px;}
+  .tzero{color:var(--muted);font-size:.9rem;}
+
+  .lbl{font-size:.74rem;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;color:var(--muted);margin:6px 4px 11px;display:flex;align-items:center;gap:10px;}
+  .lbl::after{content:"";flex:1;height:1px;background:var(--line);}
+  .lbl.viol{color:var(--viol);} .lbl.bonus{color:var(--money);}
+
+  .list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px 14px;cursor:pointer;transition:transform .08s;text-align:left;color:var(--text);}
+  .item:active{transform:scale(.985);}
+  .item.violitem{border-left:3px solid var(--viol);}
+  .item.bonusitem{border-left:3px solid var(--money);}
+  .item .emoji{font-size:1.3rem;width:28px;text-align:center;flex:0 0 auto;}
+  .item .nm{flex:1;font-weight:500;font-size:.98rem;line-height:1.25;}
+  .item .amt{font-family:"Space Mono";font-weight:700;font-size:1rem;}
+  .item.violitem .amt{color:var(--viol);} .item.bonusitem .amt{color:var(--money);}
+  .empty{color:var(--muted);text-align:center;padding:16px;font-size:.92rem;}
+
+  .actlog{display:flex;flex-direction:column;}
+  .logrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:.92rem;}
+  .logrow .lt{display:flex;gap:9px;align-items:center;min-width:0;}
+  .logrow .lt .e{flex:0 0 auto;}
+  .logrow .lt .tx{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .logrow .when{color:var(--muted);font-size:.74rem;}
+  .logrow .d{font-family:"Space Mono";font-weight:700;font-size:.92rem;flex:0 0 auto;}
+  .logrow .d.plus{color:var(--money);} .logrow .d.minus{color:var(--fine);} .logrow .d.stick{color:var(--viol);}
+  .undo{margin:10px auto 0;display:block;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-family:inherit;font-weight:600;font-size:.9rem;padding:9px 18px;border-radius:11px;cursor:pointer;}
+  .undo:active{transform:scale(.97);}
+
+  /* modal */
+  .scrim{position:fixed;inset:0;background:rgba(4,7,12,.72);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center;z-index:50;}
+  .scrim.open{display:flex;}
+  .sheet{width:100%;max-width:560px;background:var(--bg2);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:90dvh;overflow-y:auto;animation:rise .2s ease-out;}
+  @keyframes rise{from{transform:translateY(26px);opacity:.6}to{transform:none;opacity:1}}
+  .sheet h2{margin:2px 0 4px;font-family:"Space Grotesk";font-size:1.3rem;}
+  .sheet .sub{color:var(--muted);font-size:.9rem;margin:0 0 16px;}
+  .row{display:flex;gap:10px;}
+  .btn{border:none;border-radius:13px;padding:14px;font-family:"Inter";font-weight:700;font-size:1rem;cursor:pointer;flex:1;}
+  .btn:active{transform:scale(.97);}
+  .btn.money{background:var(--money);color:#04241a;} .btn.fine{background:var(--fine);color:#2a1400;}
+  .btn.viol{background:var(--viol);color:#2a0810;} .btn.ghost{background:var(--panel);color:var(--text);border:1px solid var(--line);}
+
+  .cEmoji{font-size:2.4rem;text-align:center;margin:4px 0;} .cLine{text-align:center;font-size:1.1rem;margin-bottom:4px;} .cSub{text-align:center;color:var(--muted);margin-bottom:16px;font-size:.92rem;}
+
+  .tabbar{display:flex;gap:5px;margin:2px 0 16px;background:var(--panel);padding:5px;border-radius:13px;flex-wrap:wrap;}
+  .tab{flex:1;text-align:center;padding:9px 4px;border-radius:9px;font-weight:600;font-size:.8rem;color:var(--muted);cursor:pointer;min-width:60px;}
+  .tab.active{background:var(--panel-hi);color:var(--text);}
+  .field{margin-bottom:14px;} .field label{display:block;font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:600;}
+  input[type=text],input[type=number],input[type=password]{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-family:inherit;font-size:1rem;padding:12px 13px;border-radius:11px;}
+  input:focus{outline:2px solid var(--money);}
+  .editrow{display:flex;gap:7px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:8px;margin-bottom:8px;}
+  .editrow .em{width:42px;height:42px;font-size:1.3rem;text-align:center;padding:0;} .editrow .nm{flex:1;} .editrow .vl{width:66px;text-align:center;}
+  .editrow .del{background:transparent;border:none;color:var(--viol);font-size:1.3rem;cursor:pointer;width:30px;}
+  .add{width:100%;background:var(--panel);border:1px dashed var(--line);color:var(--muted);padding:12px;border-radius:13px;font-family:inherit;font-weight:600;cursor:pointer;margin-top:2px;}
+  .hint{font-size:.82rem;color:var(--muted);margin:2px 2px 14px;line-height:1.45;}
+  .toggle{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:12px;}
+  .toggle .ti{font-size:.8rem;color:var(--muted);margin-top:3px;max-width:74%;}
+  .sw{width:50px;height:29px;border-radius:999px;background:#39435c;position:relative;flex:0 0 auto;cursor:pointer;}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:23px;height:23px;border-radius:50%;background:#fff;transition:.18s;}
+  .sw.on{background:var(--money);} .sw.on::after{left:24px;}
+  .prefix{position:relative;} .prefix input{padding-left:26px;} .prefix::before{content:"$";position:absolute;left:12px;top:12px;color:var(--muted);font-family:"Space Mono";}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);background:var(--panel-hi);border:1px solid var(--line);color:var(--text);padding:12px 18px;border-radius:12px;font-weight:600;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.22s;z-index:80;max-width:88%;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .childbanner{background:var(--money-wash);border:1px solid rgba(52,211,153,.3);color:var(--money);font-weight:600;font-size:.82rem;text-align:center;padding:8px;border-radius:10px;margin-bottom:12px;}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="who"><span class="nm grotesk" id="nameLabel">Allowance</span></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="synced" id="syncBadge"><span class="d"></span><span id="syncText">On this phone</span></span>
+      <button class="gear" id="gearBtn" aria-label="Parent settings">⚙️</button>
+    </div>
+  </div>
+
+  <div id="childBanner" class="childbanner" style="display:none">Child view — this shows the week. Parents make changes on their phones.</div>
+
+  <div class="hero">
+    <div class="fx" id="fx"></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+      <div class="cap" id="heroCap">Keeping this week</div>
+      <div class="weekpill" id="weekPill">Week of —</div>
+    </div>
+    <div class="amount ledger" id="amountEl">$21<span class="cts">.00</span></div>
+    <div class="ofbase" id="ofBase">of $21.00 started</div>
+    <div class="barwrap"><div class="bar" id="barEl"></div></div>
+  </div>
+
+  <div class="meters">
+    <div class="meter">
+      <div class="ml">Fines today</div>
+      <div class="mv ledger" id="capVal">$0 / $3</div>
+      <div class="capdots" id="capDots"></div>
+    </div>
+    <div class="meter">
+      <div class="ml">Sticks this week</div>
+      <div class="mv" id="stickCount">0</div>
+      <div class="tally" id="tallyBoard"><span class="tzero">none yet</span></div>
+    </div>
+  </div>
+
+  <div id="parentActions">
+    <div class="lbl viol">Rule violations — fine</div>
+    <div class="list" id="violList"></div>
+    <div class="lbl bonus">Caught being good — bonus</div>
+    <div class="list" id="bonusList"></div>
+  </div>
+
+  <div class="lbl">This week's activity</div>
+  <div class="actlog" id="actLog"></div>
+  <button class="undo" id="undoBtn" style="display:none">↩ Undo last</button>
+</div>
+
+<!-- confirm -->
+<div class="scrim" id="confirmScrim">
+  <div class="sheet">
+    <div class="cEmoji" id="cEmoji">⚠️</div>
+    <div class="cLine" id="cLine"></div>
+    <div class="cSub" id="cSub"></div>
+    <div class="row"><button class="btn ghost" id="cCancel">Cancel</button><button class="btn viol" id="cOk">Confirm</button></div>
+  </div>
+</div>
+
+<!-- settings -->
+<div class="scrim" id="setScrim">
+  <div class="sheet">
+    <h2>Parent settings</h2>
+    <p class="sub">Set the weekly amount, rules, fines, and bonuses.</p>
+    <div class="tabbar">
+      <div class="tab active" data-tab="week">Week</div>
+      <div class="tab" data-tab="rules">Rules</div>
+      <div class="tab" data-tab="bonus">Bonuses</div>
+      <div class="tab" data-tab="share">Sharing</div>
+    </div>
+    <div id="tab-week"></div>
+    <div id="tab-rules" style="display:none"></div>
+    <div id="tab-bonus" style="display:none"></div>
+    <div id="tab-share" style="display:none"></div>
+    <div class="row" style="margin-top:14px"><button class="btn ghost" id="setClose">Done</button></div>
+  </div>
+</div>
+
+<!-- PIN -->
+<div class="scrim" id="pinScrim">
+  <div class="sheet">
+    <h2>Parent PIN</h2>
+    <p class="sub">Keeps settings and fines out of the wrong hands.</p>
+    <div class="field"><input type="password" id="pinInput" inputmode="numeric" placeholder="••••" maxlength="8" /></div>
+    <div class="row"><button class="btn ghost" id="pinCancel">Cancel</button><button class="btn money" id="pinOk">Unlock</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     FIREBASE CONFIG  —  EDIT THIS BLOCK TO TURN ON PHONE SYNC
+     Leave it as-is and the app runs on ONE phone (localStorage).
+     Fill it in (see the setup sheet) and both parent phones + the
+     child view stay in sync in real time.
+     ============================================================ -->
+<script>
+  const FIREBASE_CONFIG = {
+    apiKey: "PASTE_API_KEY",
+    authDomain: "PASTE.firebaseapp.com",
+    projectId: "PASTE_PROJECT_ID",
+    storageBucket: "PASTE.appspot.com",
+    messagingSenderId: "PASTE_SENDER_ID",
+    appId: "PASTE_APP_ID"
+  };
+  // One shared code for your family. Both parents + child view must use the SAME code.
+  const FAMILY_CODE = "our-family";
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============================ MODE DETECTION ============================ */
+const IS_CHILD = new URLSearchParams(location.search).get("view")==="child";
+const CLOUD_READY = (()=>{
+  try{ return typeof firebase!=="undefined" && FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith("PASTE"); }
+  catch(e){ return false; }
+})();
+let db=null, docRef=null;
+if(CLOUD_READY){
+  try{ firebase.initializeApp(FIREBASE_CONFIG); db=firebase.firestore(); docRef=db.collection("families").doc(FAMILY_CODE); }
+  catch(e){ console.warn("Firebase init failed, using local mode", e); }
+}
+const LOCAL_KEY="teen-allowance-v1";
+
+/* ============================ DEFAULT STATE ============================ */
+function mondayISO(d){ d=d||new Date(); const x=new Date(d); const day=(x.getDay()+6)%7; x.setDate(x.getDate()-day); x.setHours(0,0,0,0); return x.toISOString().slice(0,10); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+
+const DEFAULT={
+  config:{
+    childName:"Allowance",
+    weekBaseCents:2100,      // $21.00
+    dailyFineCapCents:300,   // $3.00
+    fineStepCents:100,       // $1.00 default fine
+    bonusCapAtBase:true,     // bonuses can't push above the weekly base
+    pin:"",
+    rules:[
+      {id:"r1",emoji:"🕵️",name:"Sneaking / dishonesty",fine:100},
+      {id:"r2",emoji:"😠",name:"Disrespect",fine:100},
+      {id:"r3",emoji:"📱",name:"Electronics in bathroom",fine:100},
+      {id:"r4",emoji:"🧹",name:"Chores not done when expected",fine:100},
+    ],
+    bonuses:[
+      {id:"b1",emoji:"🤝",name:"Genuine repair / made it right",amt:100},
+      {id:"b2",emoji:"💛",name:"Kind, thoughtful gesture",amt:100},
+      {id:"b3",emoji:"🌟",name:"Went above and beyond",amt:100},
+    ]
+  },
+  week:{
+    startISO:mondayISO(),
+    balanceCents:2100,
+    sticks:0,
+    fineDate:todayISO(),
+    fineTodayCents:0,
+    log:[]   // {ts,type:'fine'|'bonus'|'adjust'|'newweek',name,emoji,delta(cents),stick(bool),moneyApplied(bool)}
+  }
+};
+
+let state=null, saveTimer=null, unsub=null, applying=false;
+const $=s=>document.querySelector(s);
+const uid=()=>"x"+Math.random().toString(36).slice(2,8);
+
+/* ============================ PERSISTENCE ============================ */
+function localSave(){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(state)); }catch(e){} }
+function localLoad(){ try{ const s=localStorage.getItem(LOCAL_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
+
+async function persist(){
+  if(CLOUD_READY && docRef){
+    try{ await docRef.set(state); }catch(e){ console.warn("cloud save failed",e); localSave(); }
+  } else { clearTimeout(saveTimer); saveTimer=setTimeout(localSave,120); }
+}
+/* transactional mutation for concurrency-safe fine/bonus across two phones */
+async function mutate(fn){
+  if(CLOUD_READY && docRef){
+    try{
+      await db.runTransaction(async tx=>{
+        const snap=await tx.get(docRef);
+        const s = snap.exists ? snap.data() : JSON.parse(JSON.stringify(DEFAULT));
+        rollWeekMaybe(s); rollDayMaybe(s);
+        fn(s);
+        tx.set(docRef,s);
+      });
+    }catch(e){ console.warn("txn failed, local fallback",e); fn(state); rollDayMaybe(state); persist(); render(); }
+  } else {
+    rollWeekMaybe(state); rollDayMaybe(state); fn(state); persist(); render();
+  }
+}
+
+/* ============================ TIME ROLLOVERS ============================ */
+function rollDayMaybe(s){ if(s.week.fineDate!==todayISO()){ s.week.fineDate=todayISO(); s.week.fineTodayCents=0; } }
+function rollWeekMaybe(s){ /* auto-detect handled manually via "Start new week" to avoid surprise resets */ }
+
+/* ============================ FORMAT ============================ */
+function money(cents){ const neg=cents<0; cents=Math.abs(Math.round(cents)); const d=Math.floor(cents/100), c=cents%100; return (neg?"-$":"$")+d+"."+String(c).padStart(2,"0"); }
+function moneyHero(cents){ cents=Math.max(0,Math.round(cents)); const d=Math.floor(cents/100),c=cents%100; return {d:"$"+d, c:"."+String(c).padStart(2,"0")}; }
+function fmtTime(ts){ const dt=new Date(ts),n=new Date(),same=dt.toDateString()===n.toDateString(); const t=dt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}); return same?t:dt.toLocaleDateString([],{weekday:"short"})+" "+t; }
+function weekLabel(iso){ const d=new Date(iso+"T00:00:00"); return "Week of "+d.toLocaleDateString([],{month:"short",day:"numeric"}); }
+function esc(s){ return (s||"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+let toastTimer=null; function toast(m){ const el=$("#toast"); el.textContent=m; el.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove("show"),2000); }
+
+/* ============================ FX ============================ */
+function floatFx(cents,up){ const fx=$("#fx"); const el=document.createElement("div"); el.className="float "+(up?"up":"down"); el.textContent=(up?"+":"−")+money(Math.abs(cents)).replace("$","$"); fx.appendChild(el); setTimeout(()=>el.remove(),1100); const a=$("#amountEl"); a.classList.remove("bump"); void a.offsetWidth; a.classList.add("bump"); }
+
+/* ============================ RENDER ============================ */
+function render(){
+  const c=state.config, w=state.week;
+  $("#nameLabel").textContent=c.childName||"Allowance";
+  $("#weekPill").textContent=weekLabel(w.startISO);
+  const h=moneyHero(w.balanceCents); $("#amountEl").innerHTML=h.d+'<span class="cts">'+h.c+'</span>';
+  $("#ofBase").textContent="of "+money(c.weekBaseCents)+" started";
+  // bar
+  const pct=c.weekBaseCents>0?Math.max(0,Math.min(100,(w.balanceCents/c.weekBaseCents)*100)):0;
+  const bar=$("#barEl"); bar.style.width=pct+"%"; bar.className="bar"+(pct<34?" low":pct<67?" mid":"");
+  // cap
+  $("#capVal").textContent=money(w.fineTodayCents).replace(".00","")+" / "+money(c.dailyFineCapCents).replace(".00","");
+  const dots=Math.max(1,Math.round(c.dailyFineCapCents/Math.max(1,c.fineStepCents)));
+  const used=Math.round(w.fineTodayCents/Math.max(1,c.fineStepCents));
+  const cd=$("#capDots"); cd.innerHTML=""; for(let i=0;i<dots;i++){ const el=document.createElement("div"); el.className="capdot"+(i<used?" used":""); cd.appendChild(el); }
+  // sticks tally
+  $("#stickCount").textContent=w.sticks;
+  const tb=$("#tallyBoard"); tb.innerHTML="";
+  if(w.sticks<=0){ tb.innerHTML='<span class="tzero">none yet</span>'; }
+  else { let left=w.sticks; while(left>0){ const g=Math.min(5,left); const grp=document.createElement("div"); grp.className="tgroup"+(g===5?" five":""); for(let i=0;i<g;i++){ const s=document.createElement("div"); s.className="s"; grp.appendChild(s);} tb.appendChild(grp); left-=g; } }
+  // lists
+  renderList("#violList","violitem",c.rules,r=>"−"+money(r.fine),applyFineAsk,"No rules yet. Add some in ⚙️.");
+  renderList("#bonusList","bonusitem",c.bonuses,b=>"+"+money(b.amt),applyBonus,"No bonuses yet. Add some in ⚙️.");
+  renderLog();
+  // child mode chrome
+  if(IS_CHILD){ $("#gearBtn").style.display="none"; $("#parentActions").style.display="none"; $("#childBanner").style.display="block"; $("#undoBtn").style.display="none"; $("#heroCap").textContent="You're keeping this week"; }
+  // sync badge
+  const sb=$("#syncBadge"); if(CLOUD_READY){ sb.classList.add("live"); $("#syncText").textContent=IS_CHILD?"Live":"Synced"; } else { sb.classList.remove("live"); $("#syncText").textContent="On this phone"; }
+}
+function renderList(sel,cls,arr,amtFn,onClick,emptyMsg){
+  const l=$(sel); l.innerHTML="";
+  if(!arr.length){ l.innerHTML='<div class="empty">'+emptyMsg+'</div>'; return; }
+  arr.forEach(it=>{ const el=document.createElement("button"); el.className="item "+cls;
+    el.innerHTML=`<span class="emoji">${it.emoji||"•"}</span><span class="nm">${esc(it.name)}</span><span class="amt">${amtFn(it)}</span>`;
+    el.onclick=()=>onClick(it); l.appendChild(el); });
+}
+function renderLog(){
+  const c=$("#actLog"); c.innerHTML="";
+  if(!state.week.log.length){ c.innerHTML='<div class="empty">Nothing logged this week yet.</div>'; $("#undoBtn").style.display="none"; return; }
+  state.week.log.slice(0,40).forEach(e=>{
+    const r=document.createElement("div"); r.className="logrow";
+    let dcls="stick",dtx="";
+    if(e.delta>0){ dcls="plus"; dtx="+"+money(e.delta); }
+    else if(e.delta<0){ dcls="minus"; dtx=money(e.delta); }
+    else { dcls="stick"; dtx=e.stick?"stick only":"—"; }
+    const stickTag = (e.stick && e.delta<0) ? ' <span style="color:var(--viol)">+stick</span>' : '';
+    r.innerHTML=`<div class="lt"><span class="e">${e.emoji||""}</span><span class="tx">${esc(e.name)}</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span class="when">${fmtTime(e.ts)}</span><span class="d ${dcls}">${dtx}${stickTag}</span></div>`;
+    c.appendChild(r);
+  });
+  if(!IS_CHILD) $("#undoBtn").style.display="block";
+}
+
+/* ============================ ACTIONS ============================ */
+function applyFineAsk(rule){
+  if(IS_CHILD) return;
+  const w=state.week, c=state.config;
+  const atCap = (w.fineDate===todayISO()) && (w.fineTodayCents >= c.dailyFineCapCents);
+  $("#cEmoji").textContent=rule.emoji||"⚠️";
+  $("#cLine").textContent="Log: "+rule.name+"?";
+  $("#cSub").textContent = atCap
+    ? "Daily fine cap reached — this adds a stick only, no money off."
+    : "Fine "+money(rule.fine)+" and add a stick.";
+  $("#cOk").textContent = atCap ? "Add stick" : "Apply fine";
+  $("#cOk").className="btn viol";
+  pending=()=>doFine(rule);
+  $("#confirmScrim").classList.add("open");
+}
+function doFine(rule){
+  mutate(s=>{
+    const w=s.week,c=s.config;
+    const capLeft = c.dailyFineCapCents - w.fineTodayCents;
+    let moneyOff = 0, moneyApplied=false;
+    if(capLeft>0){ moneyOff=Math.min(rule.fine, capLeft, w.balanceCents); w.balanceCents-=moneyOff; w.fineTodayCents+=moneyOff; moneyApplied=moneyOff>0; }
+    w.sticks+=1;
+    w.log.unshift({ts:Date.now(),type:"fine",name:rule.name,emoji:rule.emoji,delta:-moneyOff,stick:true,moneyApplied});
+    w.log=w.log.slice(0,120);
+  }).then(()=>{ if(!(CLOUD_READY&&docRef)){} floatFx(-rule.fine,false); });
+}
+function applyBonus(bonus){
+  if(IS_CHILD) return;
+  mutate(s=>{
+    const w=s.week,c=s.config;
+    let add=bonus.amt;
+    if(c.bonusCapAtBase){ add=Math.min(add, Math.max(0,c.weekBaseCents - w.balanceCents)); }
+    w.balanceCents+=add;
+    w.log.unshift({ts:Date.now(),type:"bonus",name:bonus.name,emoji:bonus.emoji,delta:add,stick:false,moneyApplied:add>0});
+    w.log=w.log.slice(0,120);
+    if(add<bonus.amt && c.bonusCapAtBase) w._cap=true; else delete w._cap;
+  }).then(()=>{ floatFx(bonus.amt,true); if(state.week._cap) toast("At the weekly max — no more to add back"); });
+}
+let pending=null;
+$("#cCancel").onclick=()=>{ $("#confirmScrim").classList.remove("open"); pending=null; };
+$("#cOk").onclick=()=>{ if(pending)pending(); $("#confirmScrim").classList.remove("open"); pending=null; };
+$("#confirmScrim").onclick=e=>{ if(e.target===$("#confirmScrim")){ $("#confirmScrim").classList.remove("open"); pending=null; } };
+
+$("#undoBtn").onclick=()=>{
+  mutate(s=>{
+    const w=s.week; if(!w.log.length) return;
+    const last=w.log.shift();
+    if(last.type==="fine"){ w.balanceCents-=last.delta; /* delta negative => adds back */ if(last.moneyApplied) w.fineTodayCents=Math.max(0,w.fineTodayCents+last.delta); if(last.stick) w.sticks=Math.max(0,w.sticks-1); }
+    else if(last.type==="bonus"){ w.balanceCents-=last.delta; }
+    else if(last.type==="adjust"){ w.balanceCents-=last.delta; }
+  }).then(()=>toast("Undone"));
+};
+
+/* ============================ SETTINGS ============================ */
+$("#gearBtn").onclick=async()=>{ const ok=await requirePin(); if(!ok)return; buildTab("week"); $("#setScrim").classList.add("open"); };
+$("#setClose").onclick=()=>{ $("#setScrim").classList.remove("open"); render(); };
+document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); t.classList.add("active"); ["week","rules","bonus","share"].forEach(n=>$("#tab-"+n).style.display=(n===t.dataset.tab)?"block":"none"); buildTab(t.dataset.tab); }; });
+function buildTab(w){ if(w==="week")buildWeek(); else if(w==="rules")buildItems("rules"); else if(w==="bonus")buildItems("bonus"); else buildShare(); }
+
+function buildWeek(){
+  const c=$("#tab-week"); c.innerHTML=""; const cfg=state.config, wk=state.week;
+  add(c,`<div class="field"><label>Teen's name / title</label><input type="text" id="nameIn" value="${esc(cfg.childName)}"/></div>`);
+  add(c,`<div class="field"><label>Weekly allowance (front-loaded)</label><div class="prefix"><input type="number" id="baseIn" step="0.01" value="${(cfg.weekBaseCents/100).toFixed(2)}"/></div></div>`);
+  add(c,`<div class="field"><label>Daily fine cap</label><div class="prefix"><input type="number" id="capIn" step="0.01" value="${(cfg.dailyFineCapCents/100).toFixed(2)}"/></div></div>`);
+  add(c,`<div class="field"><label>Default fine per violation</label><div class="prefix"><input type="number" id="stepIn" step="0.01" value="${(cfg.fineStepCents/100).toFixed(2)}"/></div></div>`);
+  // bonus cap toggle
+  const tg=el(`<div class="toggle"><div><div style="font-weight:600">Bonuses only restore up to the weekly amount</div><div class="ti">On = bonuses help recover lost money but can't push above the front-loaded total. Off = bonuses can earn above it.</div></div><div class="sw ${cfg.bonusCapAtBase?'on':''}" id="capSw"></div></div>`);
+  c.appendChild(tg);
+  tg.querySelector("#capSw").onclick=e=>{ cfg.bonusCapAtBase=!cfg.bonusCapAtBase; e.target.classList.toggle("on",cfg.bonusCapAtBase); persist(); };
+  // bindings
+  c.querySelector("#nameIn").oninput=e=>{cfg.childName=e.target.value;persist();$("#nameLabel").textContent=cfg.childName||"Allowance";};
+  c.querySelector("#baseIn").oninput=e=>{cfg.weekBaseCents=dollarsToCents(e.target.value);persist();};
+  c.querySelector("#capIn").oninput=e=>{cfg.dailyFineCapCents=dollarsToCents(e.target.value);persist();};
+  c.querySelector("#stepIn").oninput=e=>{cfg.fineStepCents=dollarsToCents(e.target.value);persist();};
+  // adjust now
+  add(c,`<label style="display:block;font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:8px 2px 8px;font-weight:600;">Adjust balance now (have ${money(wk.balanceCents)})</label>`);
+  const adj=el(`<div class="row" style="margin-bottom:14px"><div class="prefix" style="flex:1"><input type="number" id="adjIn" step="0.01" placeholder="e.g. 2 or -2"/></div><button class="btn ghost" id="adjBtn" style="flex:0 0 92px">Apply</button></div>`);
+  c.appendChild(adj);
+  adj.querySelector("#adjBtn").onclick=()=>{ const v=dollarsToCents(adj.querySelector("#adjIn").value); if(!v)return; mutate(s=>{ s.week.balanceCents=Math.max(0,s.week.balanceCents+v); s.week.log.unshift({ts:Date.now(),type:"adjust",name:"Manual adjust",emoji:"✏️",delta:v,stick:false,moneyApplied:true}); s.week.log=s.week.log.slice(0,120); }).then(()=>buildWeek()); };
+  // new week
+  add(c,`<label style="display:block;font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:8px 2px 8px;font-weight:600;">Start a new week</label>`);
+  add(c,`<p class="hint">Front-loads the weekly amount (${money(cfg.weekBaseCents)}), clears sticks and the daily fine, and starts a fresh log. Do this on payout day.</p>`);
+  const nw=el(`<button class="btn money" id="newWeekBtn" style="margin-bottom:14px;width:100%">Pay out &amp; start new week</button>`);
+  c.appendChild(nw);
+  nw.querySelector? null:null;
+  nw.onclick=()=>{ if(confirm("Start a new week? This front-loads "+money(cfg.weekBaseCents)+", clears sticks, and starts a fresh log.")){ mutate(s=>{ s.week={startISO:mondayISO(),balanceCents:s.config.weekBaseCents,sticks:0,fineDate:todayISO(),fineTodayCents:0,log:[{ts:Date.now(),type:"newweek",name:"New week started",emoji:"🗓️",delta:s.config.weekBaseCents,stick:false,moneyApplied:true}]}; }).then(()=>{ $("#setScrim").classList.remove("open"); render(); toast("New week — "+money(cfg.weekBaseCents)+" loaded"); }); } };
+  // PIN
+  add(c,`<div class="field" style="margin-top:6px"><label>Parent PIN (blank = no lock)</label><input type="text" id="pinSet" inputmode="numeric" value="${esc(cfg.pin)}" placeholder="e.g. 1234"/></div>`);
+  c.querySelector("#pinSet").oninput=e=>{cfg.pin=e.target.value.trim();persist();};
+}
+function buildItems(kind){
+  const c=$("#tab-"+kind); c.innerHTML="";
+  add(c,`<p class="hint">${kind==="rules"?"Rule violations that trigger a fine. Each fine also adds a stick. Tap any field to edit; the $ is the fine amount.":"Positive behaviors a parent can catch and name. Tap any field to edit; the $ is what it adds back. Keep these authentic — reward real repair, not performance."}</p>`);
+  const arr = kind==="rules"?state.config.rules:state.config.bonuses;
+  const valKey = kind==="rules"?"fine":"amt";
+  arr.forEach((it,i)=>c.appendChild(itemRow(kind,it,i,valKey)));
+  const add2=el(`<button class="add">+ Add ${kind==="rules"?"rule":"bonus"}</button>`);
+  add2.onclick=()=>{ arr.push(kind==="rules"?{id:uid(),emoji:"⚠️",name:"New rule",fine:state.config.fineStepCents}:{id:uid(),emoji:"⭐",name:"New bonus",amt:100}); persist(); buildItems(kind); };
+  c.appendChild(add2);
+}
+function itemRow(kind,it,i,valKey){
+  const row=el(`<div class="editrow">
+    <input class="em" type="text" value="${esc(it.emoji)}" maxlength="2"/>
+    <input class="nm" type="text" value="${esc(it.name)}"/>
+    <div class="prefix" style="width:74px"><input class="vl" type="number" step="0.01" value="${(it[valKey]/100).toFixed(2)}"/></div>
+    <button class="del">×</button></div>`);
+  const em=row.querySelector(".em"), nm=row.querySelector(".nm"), vl=row.querySelector(".vl");
+  em.oninput=e=>{it.emoji=e.target.value;persist();};
+  nm.oninput=e=>{it.name=e.target.value;persist();};
+  vl.oninput=e=>{it[valKey]=dollarsToCents(e.target.value);persist();};
+  row.querySelector(".del").onclick=()=>{ (kind==="rules"?state.config.rules:state.config.bonuses).splice(i,1); persist(); buildItems(kind); };
+  return row;
+}
+function buildShare(){
+  const c=$("#tab-share"); c.innerHTML="";
+  const on = CLOUD_READY;
+  add(c,`<p class="hint">${on?"Phone sync is <b style='color:var(--money)'>ON</b>. Both parents and the child view share one live total through this family's cloud record.":"Phone sync is <b>off</b> — this phone keeps its own copy. To sync both parents' phones, follow the setup sheet to fill in the Firebase block at the top of this file, then re-upload it."}</p>`);
+  add(c,`<div class="field"><label>Family code (this file)</label><input type="text" value="${esc(FAMILY_CODE)}" disabled/></div>`);
+  add(c,`<label style="display:block;font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:8px 2px 8px;font-weight:600;">Child view link</label>`);
+  add(c,`<p class="hint">Open the app on the teen's device and add <b>?view=child</b> to the end of the web address. That device shows the running total and activity but can't fine, bonus, or change settings.</p>`);
+  const cur=location.origin+location.pathname;
+  add(c,`<div class="field"><input type="text" value="${esc(cur)}?view=child" readonly onclick="this.select()"/></div>`);
+}
+function add(parent,html){ const d=document.createElement("div"); d.innerHTML=html; while(d.firstChild) parent.appendChild(d.firstChild); }
+function el(html){ const d=document.createElement("div"); d.innerHTML=html.trim(); return d.firstChild; }
+function dollarsToCents(v){ const n=parseFloat(v); if(isNaN(n))return 0; return Math.round(n*100); }
+$("#setScrim").onclick=e=>{ if(e.target===$("#setScrim")){ $("#setScrim").classList.remove("open"); render(); } };
+
+/* ============================ PIN ============================ */
+let pinRes=null;
+function requirePin(){ return new Promise(res=>{ if(!state.config.pin){res(true);return;} pinRes=res; $("#pinInput").value=""; $("#pinScrim").classList.add("open"); setTimeout(()=>$("#pinInput").focus(),50); }); }
+$("#pinOk").onclick=()=>{ if($("#pinInput").value===state.config.pin){ $("#pinScrim").classList.remove("open"); pinRes&&pinRes(true); pinRes=null; } else toast("Wrong PIN"); };
+$("#pinCancel").onclick=()=>{ $("#pinScrim").classList.remove("open"); pinRes&&pinRes(false); pinRes=null; };
+
+/* ============================ INIT ============================ */
+function normalize(s){ s=Object.assign({},DEFAULT,s); s.config=Object.assign({},DEFAULT.config,s.config||{}); s.week=Object.assign({},DEFAULT.week,s.week||{}); return s; }
+async function init(){
+  if(CLOUD_READY && docRef){
+    // seed if missing
+    try{
+      const snap=await docRef.get();
+      if(!snap.exists && !IS_CHILD){ await docRef.set(DEFAULT); }
+    }catch(e){ console.warn("seed check failed",e); }
+    unsub=docRef.onSnapshot(snap=>{
+      state = snap.exists ? normalize(snap.data()) : normalize(null);
+      rollDayMaybe(state); render();
+    }, err=>{ console.warn("snapshot error",err); state=normalize(localLoad()); render(); });
+  } else {
+    state=normalize(localLoad()); rollDayMaybe(state); render();
+  }
+}
+init();
+</script>
+</body>
+</html>

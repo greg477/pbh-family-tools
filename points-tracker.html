@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Points" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="theme-color" content="#FFE9C7" />
+<title>Points</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --sky1:#FFE6BE; --sky2:#FFF4E4; --sky3:#FFEAD9;
+    --ink:#4B2E63; --ink-soft:#9177A6; --line:#F0DFC4;
+    --card:#FFFFFF; --panel:#FFF7EA;
+    --gold:#FFCB45; --gold-deep:#F2991B; --gold-light:#FFE9A8;
+    --grass:#3FC97A; --grass-deep:#2BA862;
+    --berry:#FF5C8A; --berry-deep:#E23A6E;
+    --glass:rgba(255,255,255,.34); --glassline:rgba(255,255,255,.85);
+    --shadow:0 12px 30px rgba(120,80,40,.16);
+    --shadow-sm:0 5px 14px rgba(120,80,40,.14);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; height:100%;}
+  body{
+    font-family:"Nunito", system-ui, -apple-system, sans-serif; color:var(--ink);
+    background-color:var(--sky2);
+    background-image:
+      radial-gradient(90% 55% at 50% -8%, #FFF6D6 0%, transparent 60%),
+      linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 46%, var(--sky3) 100%);
+    background-attachment:fixed; min-height:100dvh; overflow-x:hidden;
+  }
+  .baloo{font-family:"Baloo 2", system-ui, sans-serif;}
+  .app{max-width:520px; margin:0 auto; padding:calc(14px + env(safe-area-inset-top)) 18px calc(26px + env(safe-area-inset-bottom)); min-height:100dvh; display:flex; flex-direction:column;}
+
+  /* header */
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;}
+  .kidname{font-family:"Baloo 2"; font-weight:700; font-size:1.25rem; color:var(--ink); display:flex; align-items:center; gap:8px; overflow:hidden;}
+  .kidname .star{color:var(--gold-deep); filter:drop-shadow(0 1px 0 rgba(0,0,0,.08));}
+  .kidname span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .gear{background:var(--card); border:2px solid var(--line); color:var(--ink-soft); width:46px; height:46px; border-radius:16px; font-size:1.25rem; flex:0 0 auto; display:grid; place-items:center; cursor:pointer; box-shadow:var(--shadow-sm);}
+  .gear:active{transform:scale(.92) rotate(-18deg);}
+
+  /* ===== JAR SCENE ===== */
+  .scene{position:relative; display:flex; flex-direction:column; align-items:center; padding:10px 0 6px; margin-bottom:6px;}
+  .ptscap{font-family:"Baloo 2"; font-weight:600; font-size:.8rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-soft);}
+  .total{font-family:"Baloo 2"; font-weight:800; font-size:3.9rem; line-height:1; color:var(--ink); margin:0 0 2px; font-variant-numeric:tabular-nums; display:flex; align-items:center; gap:10px;}
+  .total .cstar{font-size:2.2rem; color:var(--gold-deep); filter:drop-shadow(0 2px 0 var(--gold-deep));}
+  .total.bump{animation:bump .5s cubic-bezier(.2,1.5,.4,1);}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.13)}100%{transform:scale(1)}}
+
+  .jarwrap{position:relative; width:206px; height:234px; margin:4px 0 2px;}
+  .jarwrap.spendshake{animation:shake .4s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  /* lid */
+  .lid{position:absolute; top:0; left:50%; transform:translateX(-50%); width:132px; height:30px; z-index:4;
+    background:linear-gradient(180deg,#E9D3F0,#CBA9DC); border:3px solid #fff; border-radius:12px;
+    box-shadow:0 4px 0 #B98FCE, var(--shadow-sm); transition:transform .3s;}
+  .lid::after{content:""; position:absolute; top:7px; left:50%; transform:translateX(-50%); width:54px; height:6px; border-radius:6px; background:rgba(255,255,255,.6);}
+  .jarwrap.open .lid{transform:translateX(-50%) translateY(-24px) rotate(-10deg);}
+  /* glass body */
+  .glass{position:absolute; top:24px; left:50%; transform:translateX(-50%); width:178px; height:200px; z-index:2;
+    border:4px solid var(--glassline); border-radius:26px 26px 40px 40px;
+    background:linear-gradient(135deg, rgba(255,255,255,.5), rgba(191,227,255,.22));
+    box-shadow:inset 0 2px 10px rgba(255,255,255,.8), var(--shadow); overflow:hidden;}
+  .fill{position:absolute; left:0; right:0; bottom:0; height:0%;
+    background:linear-gradient(180deg,var(--gold-light) 0%, var(--gold) 34%, var(--gold-deep) 100%);
+    transition:height .65s cubic-bezier(.3,1.3,.5,1);}
+  .fill::before{content:""; position:absolute; top:-11px; left:0; right:0; height:16px;
+    background:radial-gradient(circle at 10px -2px, transparent 9px, var(--gold-light) 10px) repeat-x; background-size:22px 20px;
+    animation:wave 3.5s linear infinite;}
+  @keyframes wave{from{background-position-x:0}to{background-position-x:22px}}
+  .fillcoin{position:absolute; width:20px; height:20px; border-radius:50%; background:radial-gradient(circle at 34% 30%, #FFF4CC, var(--gold-deep)); box-shadow:inset 0 0 0 2px rgba(255,255,255,.35);}
+  .fillgem{position:absolute; width:16px; height:16px; transform:rotate(45deg); border-radius:4px; box-shadow:inset 0 0 0 2px rgba(255,255,255,.4);}
+  .shine{position:absolute; top:30px; left:24px; width:22px; height:120px; border-radius:40%; background:linear-gradient(180deg,rgba(255,255,255,.75),transparent); z-index:3; pointer-events:none;}
+  .sparkle{position:absolute; z-index:4; font-size:1.1rem; pointer-events:none; animation:spk 1.3s ease-out forwards;}
+  @keyframes spk{0%{opacity:0;transform:scale(.4) rotate(0)}30%{opacity:1}100%{opacity:0;transform:scale(1.2) translateY(-18px) rotate(25deg)}}
+
+  .goalcap{font-family:"Baloo 2"; font-weight:700; font-size:1.05rem; color:var(--ink); text-align:center; margin-top:4px; min-height:1.5em;}
+  .goalcap .em{font-size:1.2rem;}
+  .goalcap.ready{color:var(--grass-deep);}
+
+  .dropcoin{position:fixed; width:26px; height:26px; border-radius:50%; z-index:200; pointer-events:none;
+    background:radial-gradient(circle at 34% 30%, #FFF4CC, var(--gold-deep)); box-shadow:0 2px 5px rgba(0,0,0,.25), inset 0 0 0 2px rgba(255,255,255,.4);}
+
+  /* ===== EARN TOKENS ===== */
+  .section-h{font-family:"Baloo 2"; font-weight:700; font-size:1.05rem; color:var(--ink); margin:14px 2px 10px; display:flex; align-items:center; gap:8px;}
+  .section-h .ic{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:.95rem;}
+  .section-h .ic.e{background:var(--grass);} .section-h .ic.p{background:var(--gold);}
+  .tokens{display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:12px; margin-bottom:8px;}
+  .token{position:relative; background:var(--card); border:2px solid var(--line); border-radius:22px; padding:14px 6px 12px; cursor:pointer; text-align:center; box-shadow:var(--shadow-sm); transition:transform .12s;}
+  .token:active{transform:scale(.92) translateY(2px);}
+  .token .emoji{font-size:2.15rem; line-height:1; display:block; margin-bottom:5px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.08));}
+  .token .name{font-weight:700; font-size:.82rem; line-height:1.12; color:var(--ink); min-height:2.3em; display:flex; align-items:center; justify-content:center;}
+  .token .val{position:absolute; top:-9px; right:-7px; font-family:"Baloo 2"; font-weight:700; font-size:.82rem; color:#fff; background:var(--grass); padding:2px 9px; border-radius:999px; box-shadow:0 2px 0 var(--grass-deep); border:2px solid #fff;}
+  .token .val.neg{background:var(--berry); box-shadow:0 2px 0 var(--berry-deep);}
+
+  /* ===== PRIZE SHELF ===== */
+  .shelf{position:relative; margin-bottom:8px;}
+  .shelfscroll{display:flex; gap:12px; overflow-x:auto; padding:4px 2px 16px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;}
+  .shelfscroll::-webkit-scrollbar{height:0;}
+  .prize{flex:0 0 auto; width:130px; scroll-snap-align:start; background:var(--card); border:2px solid var(--line); border-radius:20px; padding:14px 12px 13px; cursor:pointer; text-align:center; box-shadow:var(--shadow-sm); transition:transform .14s; position:relative;}
+  .prize:active{transform:scale(.96);}
+  .prize .pemoji{font-size:2.3rem; display:block; margin-bottom:6px; transition:filter .3s;}
+  .prize .pname{font-weight:700; font-size:.86rem; line-height:1.15; min-height:2.3em; display:flex; align-items:center; justify-content:center; color:var(--ink);}
+  .prize .pcost{font-family:"Baloo 2"; font-weight:700; font-size:.92rem; margin-top:6px; color:var(--gold-deep); display:inline-flex; align-items:center; gap:4px;}
+  .prize .pcost .tk{width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#FFF4CC,var(--gold-deep));display:inline-block;}
+  .prize.ready{border-color:var(--grass); box-shadow:0 0 0 3px rgba(63,201,122,.25), var(--shadow-sm); animation:readybob 2.4s ease-in-out infinite;}
+  @keyframes readybob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .prize.ready .ptag{background:var(--grass); color:#fff;}
+  .prize.locked .pemoji{filter:grayscale(.85) opacity(.6);}
+  .prize .ptag{position:absolute; top:-9px; left:50%; transform:translateX(-50%); font-family:"Baloo 2"; font-weight:700; font-size:.7rem; padding:2px 10px; border-radius:999px; white-space:nowrap; background:var(--panel); color:var(--ink-soft); border:2px solid #fff; box-shadow:var(--shadow-sm);}
+  .shelf::after{content:""; position:absolute; left:0; right:0; bottom:4px; height:8px; border-radius:6px; background:linear-gradient(180deg,#E7CfA8,#D8BA8E); box-shadow:0 3px 6px rgba(120,80,40,.18);}
+
+  .empty{color:var(--ink-soft); text-align:center; padding:20px; font-weight:600; width:100%;}
+
+  /* ===== modal / sheet ===== */
+  .scrim{position:fixed; inset:0; background:rgba(75,46,99,.32); backdrop-filter:blur(3px); display:none; align-items:flex-end; justify-content:center; z-index:100;}
+  .scrim.open{display:flex;}
+  .sheet{width:100%; max-width:520px; background:var(--sky2); border:none; border-radius:28px 28px 0 0; padding:22px 18px calc(20px + env(safe-area-inset-bottom)); max-height:88dvh; overflow-y:auto; animation:rise .24s ease-out; box-shadow:0 -10px 40px rgba(75,46,99,.2);}
+  @keyframes rise{from{transform:translateY(32px); opacity:.5} to{transform:none; opacity:1}}
+  .sheet h2{font-family:"Baloo 2"; margin:2px 0 4px; font-size:1.4rem; font-weight:700;}
+  .sheet .sub{color:var(--ink-soft); font-size:.92rem; margin:0 0 16px; font-weight:600;}
+  .row{display:flex; gap:10px;}
+  .btn{border:none; border-radius:16px; padding:15px; font-family:"Baloo 2"; font-weight:700; font-size:1.05rem; cursor:pointer; flex:1; color:#fff;}
+  .btn:active{transform:scale(.97);}
+  .btn.primary{background:var(--grass); box-shadow:0 4px 0 var(--grass-deep);}
+  .btn.warn{background:var(--berry); box-shadow:0 4px 0 var(--berry-deep);}
+  .btn.gold{background:var(--gold-deep); box-shadow:0 4px 0 #C97A0E;}
+  .btn.ghost{background:var(--card); color:var(--ink); border:2px solid var(--line); box-shadow:var(--shadow-sm);}
+
+  .confirm-emoji{font-size:3.4rem; text-align:center; margin:4px 0 6px; animation:pop .4s cubic-bezier(.2,1.5,.4,1);}
+  @keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+  .confirm-line{font-family:"Baloo 2"; text-align:center; font-size:1.3rem; font-weight:700; margin-bottom:4px;}
+  .confirm-cost{text-align:center; color:var(--gold-deep); font-weight:700; margin-bottom:18px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:.78rem; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; font-weight:700;}
+  input[type=text],input[type=number],input[type=password]{width:100%; background:var(--card); border:2px solid var(--line); color:var(--ink); font-family:inherit; font-weight:600; font-size:1rem; padding:12px 14px; border-radius:13px;}
+  input:focus{outline:none; border-color:var(--gold);}
+  .tabbar{display:flex; gap:6px; margin:2px 0 16px; background:var(--card); padding:5px; border-radius:15px; border:2px solid var(--line);}
+  .tab{flex:1; text-align:center; padding:9px; border-radius:11px; font-family:"Baloo 2"; font-weight:700; font-size:.92rem; color:var(--ink-soft); cursor:pointer;}
+  .tab.active{background:var(--gold); color:var(--ink);}
+  .editrow{display:flex; gap:8px; align-items:center; background:var(--card); border:2px solid var(--line); border-radius:15px; padding:8px; margin-bottom:8px;}
+  .editrow .em{width:44px; height:44px; font-size:1.5rem; text-align:center; padding:0;}
+  .editrow .nm{flex:1;}
+  .editrow .vl{width:62px; text-align:center;}
+  .editrow .del{background:transparent; border:none; color:var(--berry); font-size:1.5rem; cursor:pointer; width:34px;}
+  .add{width:100%; background:var(--card); border:2px dashed var(--line); color:var(--ink-soft); padding:13px; border-radius:15px; font-family:"Baloo 2"; font-weight:700; cursor:pointer; margin-top:2px;}
+  .toggle{display:flex; align-items:center; justify-content:space-between; background:var(--card); border:2px solid var(--line); border-radius:15px; padding:14px; margin-bottom:12px;}
+  .toggle .tinfo{font-size:.82rem; color:var(--ink-soft); margin-top:3px; max-width:74%; font-weight:600;}
+  .sw{width:54px; height:31px; border-radius:999px; background:#E2D3C0; position:relative; flex:0 0 auto; cursor:pointer; transition:.18s;}
+  .sw::after{content:""; position:absolute; top:3px; left:3px; width:25px; height:25px; border-radius:50%; background:#fff; transition:.18s; box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .sw.on{background:var(--grass);} .sw.on::after{left:26px;}
+  .lab-h{display:block; font-size:.78rem; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); margin:8px 4px 8px; font-weight:700;}
+
+  .logrow{display:flex; justify-content:space-between; gap:10px; padding:11px 12px; border-bottom:2px solid var(--line); font-size:.94rem; font-weight:600;}
+  .logrow .when{color:var(--ink-soft); font-size:.78rem;}
+  .logrow .d{font-family:"Baloo 2"; font-weight:700;}
+  .logrow .d.plus{color:var(--grass-deep);}
+  .logrow .d.minus{color:var(--berry-deep);}
+
+  .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:13px 20px; border-radius:16px; font-family:"Baloo 2"; font-weight:700; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.22s; z-index:120; text-align:center; max-width:88%;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; animation-iteration-count:1 !important;}
+    .fill{transition:height .2s linear;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="kidname"><span class="star">★</span><span id="nameLabel">My Points</span></div>
+    <button class="gear" id="gearBtn" aria-label="Parent settings">⚙️</button>
+  </div>
+
+  <div class="scene">
+    <div class="ptscap">Points</div>
+    <div class="total baloo" id="totalEl"><span class="cstar">★</span><span id="totalNum">0</span></div>
+    <div class="jarwrap" id="jarwrap">
+      <div class="lid"></div>
+      <div class="glass" id="glass">
+        <div class="fill" id="fill"></div>
+        <div class="shine"></div>
+      </div>
+    </div>
+    <div class="goalcap" id="goalCap">Tap a star job to earn!</div>
+  </div>
+
+  <div class="section-h"><span class="ic e">⭐</span>Earn points</div>
+  <div class="tokens" id="earnGrid"></div>
+
+  <div class="section-h"><span class="ic p">🎁</span>Prize shelf</div>
+  <div class="shelf"><div class="shelfscroll" id="prizeList"></div></div>
+</div>
+
+<!-- Spend confirm -->
+<div class="scrim" id="confirmScrim">
+  <div class="sheet">
+    <div class="confirm-emoji" id="cEmoji">🎁</div>
+    <div class="confirm-line" id="cLine">Trade points?</div>
+    <div class="confirm-cost" id="cCost"></div>
+    <div class="row">
+      <button class="btn ghost" id="cCancel">Not yet</button>
+      <button class="btn primary" id="cConfirm">Yes, trade!</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="scrim" id="setScrim">
+  <div class="sheet" id="setSheet">
+    <h2>Parent settings</h2>
+    <p class="sub" id="setSub">Set up jobs, prizes, and points.</p>
+    <div class="tabbar">
+      <div class="tab active" data-tab="setup">Setup</div>
+      <div class="tab" data-tab="prizes">Prizes</div>
+      <div class="tab" data-tab="log">Log</div>
+    </div>
+    <div id="tab-setup"></div>
+    <div id="tab-prizes" style="display:none"></div>
+    <div id="tab-log" style="display:none"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn ghost" id="setClose">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN -->
+<div class="scrim" id="pinScrim">
+  <div class="sheet">
+    <h2 id="pinTitle">Enter parent PIN</h2>
+    <p class="sub" id="pinSub">Keeps settings out of little hands.</p>
+    <div class="field"><input type="password" id="pinInput" inputmode="numeric" placeholder="••••" maxlength="8" /></div>
+    <div class="row">
+      <button class="btn ghost" id="pinCancel">Cancel</button>
+      <button class="btn gold" id="pinOk">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- storage adapter ---------- */
+const KEY = "points-app-state-v1";
+const store = (() => {
+  const hasWin = typeof window !== "undefined" && window.storage && typeof window.storage.get === "function";
+  if (hasWin) return {
+    async get(){ try{ const r = await window.storage.get(KEY); return r ? JSON.parse(r.value) : null; }catch(e){ return null; } },
+    async set(v){ try{ await window.storage.set(KEY, JSON.stringify(v)); }catch(e){} }
+  };
+  try {
+    const t="__t"; localStorage.setItem(t,"1"); localStorage.removeItem(t);
+    return { async get(){ const s=localStorage.getItem(KEY); return s?JSON.parse(s):null; },
+             async set(v){ localStorage.setItem(KEY, JSON.stringify(v)); } };
+  } catch(e){ let mem=null; return { async get(){return mem;}, async set(v){mem=v;} }; }
+})();
+
+/* ---------- default state ---------- */
+const DEFAULT = {
+  name: "My Points", points: 0, pin: "", responseCost: false,
+  behaviors: [
+    {id:"b1", emoji:"🦷", name:"Brushed teeth", val:1},
+    {id:"b2", emoji:"📚", name:"Reading time", val:1},
+    {id:"b3", emoji:"🧹", name:"Tidied up", val:1},
+    {id:"b4", emoji:"🥦", name:"Ate dinner", val:1},
+    {id:"b5", emoji:"👂", name:"First-time listening", val:1},
+    {id:"b6", emoji:"🛏️", name:"Bedtime, no fuss", val:1},
+  ],
+  prizes: [
+    {id:"p1", emoji:"🎮", name:"20 min video game", cost:8},
+    {id:"p2", emoji:"📺", name:"Pick a show", cost:6},
+    {id:"p3", emoji:"🍦", name:"Ice cream", cost:10},
+    {id:"p4", emoji:"🏞️", name:"Trip to the park", cost:12},
+    {id:"p5", emoji:"🕹️", name:"Stay up 15 min late", cost:15},
+  ],
+  log: []
+};
+
+let state=null, saveTimer=null;
+function save(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>store.set(state), 120); }
+const $ = s => document.querySelector(s);
+const uid = () => "x"+Math.random().toString(36).slice(2,8);
+const reduced = ()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fmtTime(ts){ const d=new Date(ts), n=new Date(); const same=d.toDateString()===n.toDateString(); const t=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}); return same?t:d.toLocaleDateString([],{month:"short",day:"numeric"})+" "+t; }
+let toastTimer=null; function toast(msg){ const el=$("#toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove("show"),2000); }
+function escapeHtml(s){ return (s||"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- animated number ---------- */
+let displayPoints=0, rafId=null;
+function animateTotal(to){
+  cancelAnimationFrame(rafId);
+  const from=displayPoints, start=performance.now(), dur=500;
+  const el=$("#totalEl"), num=$("#totalNum");
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+  (function step(now){ const p=Math.min(1,(now-start)/dur), e=1-Math.pow(1-p,3);
+    displayPoints=Math.round(from+(to-from)*e); num.textContent=displayPoints;
+    if(p<1) rafId=requestAnimationFrame(step); else displayPoints=to;
+  })(start);
+}
+
+/* ---------- jar fill + goal ---------- */
+const GEMCOLORS=["#FF6B8A","#4ADE80","#5BBCFF","#C084FC"];
+function nextGoal(){
+  const un = state.prizes.filter(p=>p.cost>state.points).sort((a,b)=>a.cost-b.cost);
+  return un.length? un[0] : null;
+}
+function updateJar(animated){
+  const goal=nextGoal();
+  const fillEl=$("#fill");
+  let frac;
+  if(goal){ frac = goal.cost>0 ? state.points/goal.cost : 1; }
+  else { frac = state.points>0 ? 1 : 0; }
+  frac=Math.max(0,Math.min(1,frac));
+  fillEl.style.height=(frac*100)+"%";
+  // caption
+  const gc=$("#goalCap");
+  if(!state.prizes.length){ gc.textContent="⭐ Keep earning stars!"; gc.classList.remove("ready"); }
+  else if(goal){ const need=goal.cost-state.points; gc.innerHTML=`${need} more for <span class="em">${goal.emoji||"🎁"}</span> ${escapeHtml(goal.name)}!`; gc.classList.remove("ready"); }
+  else { gc.innerHTML="🎉 You can trade for anything!"; gc.classList.add("ready"); }
+  seedFillTreasure(frac);
+}
+function seedFillTreasure(frac){
+  const fillEl=$("#fill");
+  [...fillEl.querySelectorAll(".fillcoin,.fillgem")].forEach(n=>n.remove());
+  const h=frac*196; const n=Math.min(9, Math.floor(frac*12));
+  for(let i=0;i<n;i++){
+    const isGem=i%3===2;
+    const d=document.createElement("div");
+    d.className=isGem?"fillgem":"fillcoin";
+    d.style.left=(12+Math.random()*130)+"px";
+    d.style.bottom=(6+Math.random()*Math.max(4,h-22))+"px";
+    if(isGem) d.style.background="radial-gradient(circle at 34% 30%, #fff, "+GEMCOLORS[i%GEMCOLORS.length]+")";
+    fillEl.appendChild(d);
+  }
+}
+
+/* ---------- coin drop fx ---------- */
+function dropCoinToJar(fromEl){
+  if(reduced()) return;
+  const jar=$("#glass").getBoundingClientRect();
+  const tx=jar.left+jar.width/2-13, ty=jar.top+18;
+  let sx=tx, sy=jar.top-40;
+  if(fromEl){ const r=fromEl.getBoundingClientRect(); sx=r.left+r.width/2-13; sy=r.top+r.height/2-13; }
+  const coin=document.createElement("div"); coin.className="dropcoin";
+  coin.style.left=sx+"px"; coin.style.top=sy+"px"; document.body.appendChild(coin);
+  const midx=(sx+tx)/2, midy=Math.min(sy,ty)-60;
+  coin.animate([
+    {transform:"translate(0,0) scale(1)",opacity:1,offset:0},
+    {transform:`translate(${midx-sx}px,${midy-sy}px) scale(1.1)`,opacity:1,offset:.5},
+    {transform:`translate(${tx-sx}px,${ty-sy}px) scale(.7)`,opacity:1,offset:1}
+  ],{duration:620,easing:"cubic-bezier(.4,.1,.5,1)"}).onfinish=()=>{ coin.remove(); splash(); };
+}
+function splash(){
+  const n=1+Math.floor(Math.random()*2); const g=$("#glass").getBoundingClientRect();
+  for(let i=0;i<n;i++){ const s=document.createElement("div"); s.className="sparkle"; s.textContent=Math.random()<.5?"✨":"⭐";
+    s.style.left=(40+Math.random()*90)+"px"; s.style.top=(30+Math.random()*40)+"px"; $("#jarwrap").appendChild(s); setTimeout(()=>s.remove(),1300); }
+}
+function spendFx(){ const jw=$("#jarwrap"); jw.classList.add("open","spendshake"); setTimeout(()=>jw.classList.remove("open","spendshake"),500); }
+
+/* ---------- core actions ---------- */
+function earn(b, srcEl){
+  state.points += b.val;
+  state.log.unshift({ts:Date.now(),type:"earn",name:b.name,emoji:b.emoji,delta:b.val});
+  state.log=state.log.slice(0,200);
+  if(b.val>=0) dropCoinToJar(srcEl);
+  animateTotal(state.points);
+  setTimeout(()=>updateJar(true), b.val>=0 && !reduced()?560:0);
+  renderPrizes();
+  save();
+}
+function spend(p){
+  if(state.points<p.cost){ toast("Not enough yet — "+(p.cost-state.points)+" more to go"); return false; }
+  state.points-=p.cost;
+  state.log.unshift({ts:Date.now(),type:"spend",name:p.name,emoji:p.emoji,delta:-p.cost});
+  state.log=state.log.slice(0,200);
+  spendFx(); animateTotal(state.points); updateJar(true); save();
+  renderPrizes();
+  return true;
+}
+
+/* ---------- render ---------- */
+function renderMeter(){ $("#nameLabel").textContent=state.name||"My Points"; displayPoints=state.points; $("#totalNum").textContent=state.points; updateJar(false); }
+function renderEarn(){
+  const g=$("#earnGrid"); g.innerHTML="";
+  if(!state.behaviors.length){ g.innerHTML='<div class="empty">No jobs yet. Add some in ⚙️ settings.</div>'; return; }
+  state.behaviors.forEach(b=>{
+    const el=document.createElement("button"); el.className="token";
+    const sign=b.val<0?"":"+";
+    el.innerHTML=`<span class="val ${b.val<0?'neg':''}">${sign}${b.val}</span><span class="emoji">${b.emoji||"⭐"}</span><span class="name">${escapeHtml(b.name)}</span>`;
+    el.onclick=()=>earn(b, el);
+    g.appendChild(el);
+  });
+}
+function renderPrizes(){
+  const list=$("#prizeList"); list.innerHTML="";
+  if(!state.prizes.length){ list.innerHTML='<div class="empty">No prizes yet. Add some in ⚙️ settings.</div>'; return; }
+  state.prizes.forEach(p=>{
+    const ready=state.points>=p.cost;
+    const el=document.createElement("button"); el.className="prize "+(ready?"ready":"locked");
+    const tag = ready?'<span class="ptag">Ready!</span>':`<span class="ptag">${p.cost-state.points} more</span>`;
+    el.innerHTML=`${tag}<span class="pemoji">${p.emoji||"🎁"}</span><span class="pname">${escapeHtml(p.name)}</span><span class="pcost"><span class="tk"></span>${p.cost}</span>`;
+    el.onclick=()=>openConfirm(p);
+    list.appendChild(el);
+  });
+}
+function renderAll(){ renderMeter(); renderEarn(); renderPrizes(); }
+
+/* ---------- confirm ---------- */
+let pendingPrize=null;
+function openConfirm(p){
+  if(state.points<p.cost){ toast("Not enough yet — "+(p.cost-state.points)+" more to go"); return; }
+  pendingPrize=p;
+  $("#cEmoji").textContent=p.emoji||"🎁";
+  $("#cLine").textContent="Trade for "+p.name+"?";
+  $("#cCost").textContent="Costs "+p.cost+" points  ·  you have "+state.points;
+  $("#confirmScrim").classList.add("open");
+}
+$("#cCancel").onclick=()=>{ $("#confirmScrim").classList.remove("open"); pendingPrize=null; };
+$("#cConfirm").onclick=()=>{ if(pendingPrize) spend(pendingPrize); $("#confirmScrim").classList.remove("open"); pendingPrize=null; };
+$("#confirmScrim").onclick=e=>{ if(e.target===$("#confirmScrim")){ $("#confirmScrim").classList.remove("open"); pendingPrize=null; } };
+
+/* ---------- PIN ---------- */
+let pinResolver=null;
+function requirePin(){ return new Promise(res=>{ if(!state.pin){res(true);return;} pinResolver=res; $("#pinTitle").textContent="Enter parent PIN"; $("#pinSub").textContent="Keeps settings out of little hands."; $("#pinInput").value=""; $("#pinScrim").classList.add("open"); setTimeout(()=>$("#pinInput").focus(),50); }); }
+$("#pinOk").onclick=()=>{ if($("#pinInput").value===state.pin){ $("#pinScrim").classList.remove("open"); pinResolver&&pinResolver(true); pinResolver=null; } else toast("Wrong PIN"); };
+$("#pinCancel").onclick=()=>{ $("#pinScrim").classList.remove("open"); pinResolver&&pinResolver(false); pinResolver=null; };
+
+/* ---------- settings ---------- */
+$("#gearBtn").onclick=async()=>{ const ok=await requirePin(); if(!ok) return; buildSettings("setup"); $("#setScrim").classList.add("open"); };
+$("#setClose").onclick=()=>{ $("#setScrim").classList.remove("open"); renderAll(); };
+document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); t.classList.add("active"); ["setup","prizes","log"].forEach(name=>{ $("#tab-"+name).style.display=(name===t.dataset.tab)?"block":"none"; }); buildSettings(t.dataset.tab); }; });
+function buildSettings(which){ if(which==="setup") buildSetup(); else if(which==="prizes") buildPrizes(); else buildLog(); }
+
+function buildSetup(){
+  const c=$("#tab-setup"); c.innerHTML="";
+  const nameF=document.createElement("div"); nameF.className="field";
+  nameF.innerHTML=`<label>Child's name</label><input type="text" id="nameIn" value="${escapeHtml(state.name)}" placeholder="My Points"/>`;
+  c.appendChild(nameF);
+  nameF.querySelector("#nameIn").oninput=e=>{ state.name=e.target.value; save(); $("#nameLabel").textContent=state.name||"My Points"; };
+
+  const adj=document.createElement("div"); adj.className="field";
+  adj.innerHTML=`<label>Adjust points now (have ${state.points})</label><div class="row"><input type="number" id="adjIn" placeholder="e.g. 5 or -5" inputmode="numeric"/><button class="btn gold" id="adjBtn" style="flex:0 0 96px">Apply</button></div>`;
+  c.appendChild(adj);
+  adj.querySelector("#adjBtn").onclick=()=>{ const v=parseInt(adj.querySelector("#adjIn").value,10); if(!v)return;
+    state.points=Math.max(0,state.points+v); state.log.unshift({ts:Date.now(),type:v>0?"earn":"spend",name:"Manual adjust",emoji:"✏️",delta:v});
+    save(); animateTotal(state.points); updateJar(true); adj.querySelector("#adjIn").value=""; buildSetup(); renderPrizes(); };
+
+  const tg=document.createElement("div"); tg.className="toggle";
+  tg.innerHTML=`<div><div style="font-weight:700">Allow point loss (response cost)</div><div class="tinfo">Off by default. When on, you can add jobs with negative values that subtract points. Deductions can backfire for some kids — use deliberately.</div></div><div class="sw ${state.responseCost?'on':''}" id="rcSw"></div>`;
+  c.appendChild(tg);
+  tg.querySelector("#rcSw").onclick=e=>{ state.responseCost=!state.responseCost; e.target.classList.toggle("on",state.responseCost); save(); };
+
+  const lab=document.createElement("label"); lab.className="lab-h"; lab.textContent="Jobs (earn points)"; c.appendChild(lab);
+  state.behaviors.forEach((b,i)=>c.appendChild(editRow("b",b,i)));
+  const addB=document.createElement("button"); addB.className="add"; addB.textContent="+ Add a job";
+  addB.onclick=()=>{ state.behaviors.push({id:uid(),emoji:"⭐",name:"New job",val:1}); save(); buildSetup(); };
+  c.appendChild(addB);
+
+  const pinF=document.createElement("div"); pinF.className="field"; pinF.style.marginTop="18px";
+  pinF.innerHTML=`<label>Parent PIN (blank = no lock)</label><input type="text" id="pinSet" inputmode="numeric" value="${escapeHtml(state.pin)}" placeholder="e.g. 1234"/>`;
+  c.appendChild(pinF);
+  pinF.querySelector("#pinSet").oninput=e=>{ state.pin=e.target.value.trim(); save(); };
+}
+function buildPrizes(){
+  const c=$("#tab-prizes"); c.innerHTML="";
+  state.prizes.forEach((p,i)=>c.appendChild(editRow("p",p,i)));
+  const add=document.createElement("button"); add.className="add"; add.textContent="+ Add a prize";
+  add.onclick=()=>{ state.prizes.push({id:uid(),emoji:"🎁",name:"New prize",cost:5}); save(); buildPrizes(); };
+  c.appendChild(add);
+}
+function editRow(kind,item,i){
+  const row=document.createElement("div"); row.className="editrow";
+  const valField=kind==="b"?"val":"cost";
+  row.innerHTML=`<input class="em" type="text" value="${escapeHtml(item.emoji)}" maxlength="2" aria-label="Emoji"/><input class="nm" type="text" value="${escapeHtml(item.name)}" aria-label="Name"/><input class="vl" type="number" value="${item[valField]}" inputmode="numeric" aria-label="Points"/><button class="del" aria-label="Delete">×</button>`;
+  const [em,nm,vl]=row.querySelectorAll("input");
+  em.oninput=e=>{item.emoji=e.target.value;save();};
+  nm.oninput=e=>{item.name=e.target.value;save();};
+  vl.oninput=e=>{let n=parseInt(e.target.value,10);if(isNaN(n))n=0;if(kind==="p")n=Math.max(0,n);item[valField]=n;save();};
+  row.querySelector(".del").onclick=()=>{ const arr=kind==="b"?state.behaviors:state.prizes; arr.splice(i,1); save(); kind==="b"?buildSetup():buildPrizes(); };
+  return row;
+}
+function buildLog(){
+  const c=$("#tab-log"); c.innerHTML="";
+  if(!state.log.length){ c.innerHTML='<div class="empty">Nothing logged yet.</div>'; }
+  else state.log.slice(0,60).forEach(e=>{ const r=document.createElement("div"); r.className="logrow";
+    r.innerHTML=`<div><div>${e.emoji||""} ${escapeHtml(e.name)}</div><div class="when">${fmtTime(e.ts)}</div></div><div class="d ${e.delta>0?'plus':'minus'}">${e.delta>0?'+':'−'}${Math.abs(e.delta)}</div>`;
+    c.appendChild(r); });
+  const wrap=document.createElement("div"); wrap.className="row"; wrap.style.marginTop="14px";
+  const clr=document.createElement("button"); clr.className="btn ghost"; clr.textContent="Clear log";
+  clr.onclick=()=>{ if(confirm("Clear the activity log? Points stay the same.")){ state.log=[]; save(); buildLog(); } };
+  const rst=document.createElement("button"); rst.className="btn warn"; rst.textContent="Reset points to 0";
+  rst.onclick=()=>{ if(confirm("Set points back to 0?")){ state.points=0; state.log.unshift({ts:Date.now(),type:"spend",name:"Reset to 0",emoji:"🔄",delta:0}); save(); animateTotal(0); updateJar(true); renderPrizes(); } };
+  wrap.appendChild(clr); wrap.appendChild(rst); c.appendChild(wrap);
+}
+$("#setScrim").onclick=e=>{ if(e.target===$("#setScrim")){ $("#setScrim").classList.remove("open"); renderAll(); } };
+
+/* ---------- init ---------- */
+(async function init(){
+  const saved=await store.get();
+  state = saved && saved.behaviors ? Object.assign({},DEFAULT,saved) : JSON.parse(JSON.stringify(DEFAULT));
+  renderAll();
+})();
+</script>
+</body>
+</html>

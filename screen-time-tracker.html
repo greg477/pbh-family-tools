@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Game Time" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#0E131F" />
+<title>Game Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0E131F; --bg2:#161D2E; --panel:#1C2436; --panel-hi:#26314A;
+    --line:rgba(255,255,255,.08);
+    --cyan:#22D3EE; --cyan-deep:#0891B2;
+    --lime:#A3E635; --lime-deep:#4D7C0F;
+    --red:#F43F5E; --red-deep:#9F1239;
+    --amber:#FBBF24;
+    --text:#EAF0FA; --muted:#8FA0BF;
+    --shadow:0 12px 34px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; height:100%;}
+  body{
+    font-family:"Inter", system-ui, sans-serif; color:var(--text);
+    background-color:var(--bg);
+    background-image:radial-gradient(120% 70% at 50% -10%, #1B2740 0%, var(--bg) 60%);
+    background-attachment:fixed;
+    min-height:100dvh;
+  }
+  .mono{font-family:"Chakra Petch", system-ui, sans-serif;}
+  .app{max-width:540px; margin:0 auto;
+    padding:calc(14px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
+    min-height:100dvh; display:flex; flex-direction:column;}
+
+  /* header */
+  .top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  .name{font-weight:600; color:var(--muted); font-size:1rem; display:flex; align-items:center; gap:8px; overflow:hidden;}
+  .name span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .streak{font-family:"Chakra Petch"; font-weight:600; font-size:.92rem; color:var(--amber);
+    background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.28); padding:5px 11px; border-radius:999px; white-space:nowrap;}
+  .gear{background:var(--panel); border:1px solid var(--line); color:var(--muted);
+    width:44px; height:44px; border-radius:13px; font-size:1.25rem; display:grid; place-items:center; cursor:pointer; flex:0 0 auto;}
+  .gear:active{transform:scale(.94);}
+
+  /* hero */
+  .hero{position:relative; border-radius:24px; padding:26px 22px 22px; margin-bottom:16px;
+    background:linear-gradient(180deg,var(--panel-hi),var(--panel)); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden;}
+  .hero::before{content:""; position:absolute; inset:-50% 25% auto; height:220px;
+    background:radial-gradient(closest-side, rgba(34,211,238,.22), transparent 70%); pointer-events:none;}
+  .hero .cap{font-size:.72rem; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); font-weight:600;}
+  .bank{font-family:"Chakra Petch"; font-weight:700; font-size:3.9rem; line-height:1; margin:6px 0 4px; color:var(--cyan);
+    text-shadow:0 0 24px rgba(34,211,238,.35); font-variant-numeric:tabular-nums;}
+  .bank.bump{animation:bump .4s cubic-bezier(.2,1.4,.4,1);}
+  @keyframes bump{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+  .bank.live{color:#fff;}
+  .barwrap{height:12px; background:rgba(0,0,0,.35); border-radius:999px; overflow:hidden; margin:14px 0 6px; border:1px solid var(--line);}
+  .bar{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--cyan-deep),var(--cyan)); transition:width .4s ease;}
+  .bar.low{background:linear-gradient(90deg,#B45309,var(--amber));}
+  .barlabel{font-size:.78rem; color:var(--muted);}
+
+  .playbtn{width:100%; margin-top:16px; border:none; border-radius:16px; padding:17px; cursor:pointer;
+    font-family:"Chakra Petch"; font-weight:700; font-size:1.15rem; letter-spacing:.5px;
+    display:flex; align-items:center; justify-content:center; gap:10px;}
+  .playbtn:active{transform:scale(.98);}
+  .playbtn.go{background:linear-gradient(180deg,var(--cyan),var(--cyan-deep)); color:#04222a;}
+  .playbtn.stop{background:linear-gradient(180deg,var(--red),var(--red-deep)); color:#fff;}
+  .livedot{width:11px; height:11px; border-radius:50%; background:#fff; animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+  /* sections */
+  .lbl{font-size:.76rem; letter-spacing:1.8px; text-transform:uppercase; font-weight:700; color:var(--muted);
+    margin:8px 4px 11px; display:flex; align-items:center; gap:10px;}
+  .lbl::after{content:""; flex:1; height:1px; background:var(--line);}
+  .lbl.accent-earn{color:var(--lime);} .lbl.accent-lose{color:var(--red);}
+
+  .grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;}
+  .earn{position:relative; text-align:left; background:var(--panel); border:1px solid var(--line);
+    border-left:3px solid var(--lime); border-radius:15px; padding:13px 13px 12px; color:var(--text); cursor:pointer; transition:transform .08s;}
+  .earn:active{transform:scale(.97);}
+  .earn .emoji{font-size:1.5rem; display:block; margin-bottom:5px;}
+  .earn .nm{font-size:.9rem; font-weight:500; line-height:1.2; min-height:2.4em;}
+  .earn .amt{display:inline-block; margin-top:8px; font-family:"Chakra Petch"; font-weight:700; font-size:.9rem;
+    color:#1a2e05; background:var(--lime); padding:2px 9px; border-radius:8px;}
+
+  .lose{display:flex; flex-direction:column; gap:8px; margin-bottom:18px;}
+  .loseitem{display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line);
+    border-left:3px solid var(--red); border-radius:13px; padding:12px 14px; cursor:pointer; transition:transform .08s;}
+  .loseitem:active{transform:scale(.985);}
+  .loseitem .emoji{font-size:1.35rem; width:30px; text-align:center;}
+  .loseitem .nm{flex:1; font-weight:500; font-size:.96rem;}
+  .loseitem .amt{font-family:"Chakra Petch"; font-weight:700; color:var(--red); font-size:.98rem;}
+
+  .disabled{opacity:.4; pointer-events:none;}
+  .gamingnote{text-align:center; color:var(--muted); font-size:.9rem; margin:2px 0 18px;}
+
+  .empty{color:var(--muted); text-align:center; padding:18px; font-size:.92rem;}
+
+  /* floating fx */
+  .fx{position:absolute; inset:0; pointer-events:none; overflow:visible;}
+  .float{position:absolute; left:50%; top:34%; transform:translateX(-50%); font-family:"Chakra Petch"; font-weight:700;
+    font-size:1.5rem; padding:2px 12px; border-radius:10px; animation:fl 1s ease-out forwards;}
+  .float.up{color:#1a2e05; background:var(--lime);}
+  .float.down{color:#fff; background:var(--red);}
+  @keyframes fl{0%{opacity:0;transform:translate(-50%,8px)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-56px)}}
+
+  /* modal */
+  .scrim{position:fixed; inset:0; background:rgba(4,8,16,.7); backdrop-filter:blur(3px);
+    display:none; align-items:flex-end; justify-content:center; z-index:50;}
+  .scrim.open{display:flex;}
+  .sheet{width:100%; max-width:540px; background:var(--bg2); border:1px solid var(--line);
+    border-radius:24px 24px 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom)); max-height:90dvh; overflow-y:auto;
+    animation:rise .2s ease-out;}
+  @keyframes rise{from{transform:translateY(28px);opacity:.6}to{transform:none;opacity:1}}
+  .sheet h2{margin:2px 0 4px; font-family:"Chakra Petch"; font-size:1.3rem;}
+  .sheet .sub{color:var(--muted); font-size:.9rem; margin:0 0 16px;}
+  .row{display:flex; gap:10px;}
+  .btn{border:none; border-radius:13px; padding:14px; font-family:"Inter"; font-weight:700; font-size:1rem; cursor:pointer; flex:1;}
+  .btn:active{transform:scale(.97);}
+  .btn.cyan{background:var(--cyan); color:#04222a;}
+  .btn.red{background:var(--red); color:#fff;}
+  .btn.lime{background:var(--lime); color:#1a2e05;}
+  .btn.ghost{background:var(--panel); color:var(--text); border:1px solid var(--line);}
+
+  .cEmoji{font-size:2.6rem; text-align:center; margin:4px 0;}
+  .cLine{text-align:center; font-size:1.1rem; margin-bottom:4px;}
+  .cSub{text-align:center; color:var(--muted); margin-bottom:16px; font-size:.92rem;}
+
+  .tabbar{display:flex; gap:5px; margin:2px 0 16px; background:var(--panel); padding:5px; border-radius:13px;}
+  .tab{flex:1; text-align:center; padding:9px 4px; border-radius:9px; font-weight:600; font-size:.82rem; color:var(--muted); cursor:pointer;}
+  .tab.active{background:var(--panel-hi); color:var(--text);}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:.75rem; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; font-weight:600;}
+  input[type=text],input[type=number],input[type=password]{width:100%; background:var(--panel); border:1px solid var(--line); color:var(--text);
+    font-family:inherit; font-size:1rem; padding:12px 13px; border-radius:11px;}
+  input:focus{outline:2px solid var(--cyan);}
+  .editrow{display:flex; gap:7px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:8px; margin-bottom:8px;}
+  .editrow .em{width:42px; height:42px; font-size:1.4rem; text-align:center; padding:0;}
+  .editrow .nm{flex:1;} .editrow .vl{width:60px; text-align:center;}
+  .editrow .del{background:transparent; border:none; color:var(--red); font-size:1.3rem; cursor:pointer; width:32px;}
+  .add{width:100%; background:var(--panel); border:1px dashed var(--line); color:var(--muted); padding:12px; border-radius:13px; font-family:inherit; font-weight:600; cursor:pointer; margin-top:2px;}
+  .hint{font-size:.82rem; color:var(--muted); margin:2px 2px 14px; line-height:1.45;}
+  .toggle{display:flex; align-items:center; justify-content:space-between; background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:13px; margin-bottom:12px;}
+  .toggle .ti{font-size:.82rem; color:var(--muted); margin-top:3px; max-width:74%;}
+  .sw{width:50px; height:29px; border-radius:999px; background:#39435c; position:relative; flex:0 0 auto; cursor:pointer;}
+  .sw::after{content:""; position:absolute; top:3px; left:3px; width:23px; height:23px; border-radius:50%; background:#fff; transition:.18s;}
+  .sw.on{background:var(--lime);} .sw.on::after{left:24px;}
+
+  .logrow{display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border-bottom:1px solid var(--line); font-size:.9rem;}
+  .logrow .when{color:var(--muted); font-size:.76rem;}
+  .logrow .d.plus{color:var(--lime); font-weight:700; font-family:"Chakra Petch";}
+  .logrow .d.minus{color:var(--red); font-weight:700; font-family:"Chakra Petch";}
+
+  .streakctl{display:flex; align-items:center; justify-content:space-between; background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:12px 14px; margin-bottom:14px;}
+  .streakctl .val{font-family:"Chakra Petch"; font-size:1.5rem; color:var(--amber); min-width:40px; text-align:center;}
+  .stepbtn{width:40px; height:40px; border-radius:11px; border:1px solid var(--line); background:var(--panel-hi); color:var(--text); font-size:1.3rem; cursor:pointer;}
+
+  .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(18px); background:var(--panel-hi);
+    border:1px solid var(--line); color:var(--text); padding:12px 18px; border-radius:12px; font-weight:600; box-shadow:var(--shadow);
+    opacity:0; pointer-events:none; transition:.22s; z-index:80; max-width:88%; text-align:center;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="name"><span id="nameLabel">Game Time</span></div>
+    <div class="streak" id="streakChip">🔥 0</div>
+    <button class="gear" id="gearBtn" aria-label="Parent settings">⚙️</button>
+  </div>
+
+  <div class="hero">
+    <div class="fx" id="fx"></div>
+    <div class="cap" id="heroCap">Game time banked</div>
+    <div class="bank mono" id="bankEl">0m</div>
+    <div class="barwrap"><div class="bar" id="barEl"></div></div>
+    <div class="barlabel" id="barLabel"></div>
+    <button class="playbtn go" id="playBtn">▶ Start Gaming</button>
+  </div>
+
+  <div id="normalZone">
+    <div class="lbl accent-earn">Earn time</div>
+    <div class="grid" id="earnGrid"></div>
+    <div class="lbl accent-lose">Lose time</div>
+    <div class="lose" id="loseList"></div>
+  </div>
+
+  <div id="gamingZone" style="display:none">
+    <div class="gamingnote">Gaming in progress — the clock is running. Stop to bank the time that's left.</div>
+  </div>
+</div>
+
+<!-- generic confirm -->
+<div class="scrim" id="confirmScrim">
+  <div class="sheet">
+    <div class="cEmoji" id="cEmoji">⚠️</div>
+    <div class="cLine" id="cLine"></div>
+    <div class="cSub" id="cSub"></div>
+    <div class="row">
+      <button class="btn ghost" id="cCancel">Cancel</button>
+      <button class="btn red" id="cOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- settings -->
+<div class="scrim" id="setScrim">
+  <div class="sheet">
+    <h2>Parent settings</h2>
+    <p class="sub">Set up what earns and loses time, and manage the day.</p>
+    <div class="tabbar">
+      <div class="tab active" data-tab="earn">Earn</div>
+      <div class="tab" data-tab="lose">Lose</div>
+      <div class="tab" data-tab="day">Day</div>
+      <div class="tab" data-tab="log">Log</div>
+    </div>
+    <div id="tab-earn"></div>
+    <div id="tab-lose" style="display:none"></div>
+    <div id="tab-day" style="display:none"></div>
+    <div id="tab-log" style="display:none"></div>
+    <div class="row" style="margin-top:14px"><button class="btn ghost" id="setClose">Done</button></div>
+  </div>
+</div>
+
+<!-- PIN -->
+<div class="scrim" id="pinScrim">
+  <div class="sheet">
+    <h2>Parent PIN</h2>
+    <p class="sub">Keeps the settings out of reach.</p>
+    <div class="field"><input type="password" id="pinInput" inputmode="numeric" placeholder="••••" maxlength="8" /></div>
+    <div class="row"><button class="btn ghost" id="pinCancel">Cancel</button><button class="btn cyan" id="pinOk">Unlock</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- storage adapter ---------- */
+const KEY="screen-time-app-v1";
+const store=(()=>{
+  const w=(typeof window!=="undefined"&&window.storage&&typeof window.storage.get==="function");
+  if(w) return {async get(){try{const r=await window.storage.get(KEY);return r?JSON.parse(r.value):null;}catch(e){return null;}},
+                async set(v){try{await window.storage.set(KEY,JSON.stringify(v));}catch(e){}}};
+  try{const t="__t";localStorage.setItem(t,"1");localStorage.removeItem(t);
+    return {async get(){const s=localStorage.getItem(KEY);return s?JSON.parse(s):null;},
+            async set(v){localStorage.setItem(KEY,JSON.stringify(v));}};
+  }catch(e){let m=null;return{async get(){return m;},async set(v){m=v;}};}
+})();
+
+/* ---------- default state ---------- */
+const DEFAULT={
+  name:"Game Time",
+  sec:0,
+  streak:0,
+  dailyCap:180,          // minutes; 0 = no cap
+  carryOver:false,
+  pin:"",
+  session:null,
+  earn:[
+    {id:"e1",emoji:"☀️",name:"Morning routine done",min:45},
+    {id:"e2",emoji:"📖",name:"Homework done independently",min:60},
+    {id:"e3",emoji:"🧺",name:"Afternoon chores by 4:30",min:45},
+    {id:"e4",emoji:"📚",name:"Read for 20+ minutes",min:20},
+    {id:"e5",emoji:"🏃",name:"Active / outside 30+ min",min:20},
+    {id:"e6",emoji:"🎵",name:"Practiced instrument",min:20},
+    {id:"e7",emoji:"🧽",name:"Extra chore (volunteered)",min:20},
+    {id:"e8",emoji:"🐾",name:"Took care of pet",min:15},
+    {id:"e9",emoji:"🎲",name:"Screen-free play / hobby",min:15},
+    {id:"e10",emoji:"🧘",name:"Bonus: calmed down on own",min:30},
+    {id:"e11",emoji:"❤️",name:"Bonus: kind to parents",min:30},
+    {id:"e12",emoji:"🙌",name:"Bonus: extra helpful",min:30},
+    {id:"e13",emoji:"🔥",name:"Bonus: 3+ day streak",min:30},
+  ],
+  lose:[
+    {id:"l1",emoji:"🌥️",name:"Morning routine skipped",min:30},
+    {id:"l2",emoji:"📕",name:"Homework not done",min:45},
+    {id:"l3",emoji:"🧹",name:"Chores not done",min:30},
+  ],
+  log:[]
+};
+
+let state=null, saveTimer=null, sessionInterval=null;
+function save(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>store.set(state),120);}
+const $=s=>document.querySelector(s);
+const uid=()=>"x"+Math.random().toString(36).slice(2,8);
+
+/* ---------- formatting ---------- */
+function fmtBank(sec){
+  sec=Math.max(0,Math.round(sec));
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
+  if(sec<60 && sec>0) return sec+"s";
+  if(h>0) return h+"h "+(m>0?m+"m":"").trim();
+  return m+"m";
+}
+function fmtClock(sec){
+  sec=Math.max(0,Math.round(sec));
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+  const pad=n=>String(n).padStart(2,"0");
+  return h>0? h+":"+pad(m)+":"+pad(s) : pad(m)+":"+pad(s);
+}
+function fmtTime(ts){
+  const d=new Date(ts), n=new Date(), same=d.toDateString()===n.toDateString();
+  const t=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+  return same?t:d.toLocaleDateString([],{month:"short",day:"numeric"})+" "+t;
+}
+let toastTimer=null;
+function toast(m){const el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),1900);}
+function esc(s){return (s||"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* ---------- fx ---------- */
+function floatFx(min,up){
+  const fx=$("#fx"); const el=document.createElement("div");
+  el.className="float "+(up?"up":"down"); el.textContent=(up?"+":"−")+min+"m";
+  fx.appendChild(el); setTimeout(()=>el.remove(),1000);
+  const b=$("#bankEl"); b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump");
+}
+
+/* ---------- render ---------- */
+function renderHeader(){
+  $("#nameLabel").textContent=state.name||"Game Time";
+  $("#streakChip").textContent="🔥 "+state.streak;
+}
+function currentSec(){ return state.session? remainingSec() : state.sec; }
+function renderHero(){
+  const gaming=!!state.session;
+  const cur=currentSec();
+  const bank=$("#bankEl");
+  bank.classList.toggle("live",gaming);
+  bank.textContent = gaming ? fmtClock(cur) : fmtBank(cur);
+  $("#heroCap").textContent = gaming ? "Time remaining" : "Game time banked";
+  // bar
+  const capSec = state.dailyCap>0 ? state.dailyCap*60 : Math.max(cur,7200);
+  const pct = capSec>0 ? Math.min(100, (cur/capSec)*100) : 0;
+  const bar=$("#barEl"); bar.style.width=pct+"%";
+  bar.classList.toggle("low", cur>0 && cur < 15*60);
+  $("#barLabel").textContent = state.dailyCap>0 ? ("Daily max "+fmtBank(state.dailyCap*60)) : "";
+  // play button
+  const btn=$("#playBtn");
+  if(gaming){ btn.className="playbtn stop"; btn.innerHTML='<span class="livedot"></span> Stop &amp; bank time'; }
+  else { btn.className="playbtn go"; btn.textContent="▶ Start Gaming"; }
+  // zones
+  $("#normalZone").style.display = gaming?"none":"block";
+  $("#gamingZone").style.display = gaming?"block":"none";
+}
+function renderEarn(){
+  const g=$("#earnGrid"); g.innerHTML="";
+  if(!state.earn.length){g.innerHTML='<div class="empty" style="grid-column:1/-1">No earn items. Add some in ⚙️.</div>';return;}
+  state.earn.forEach(it=>{
+    const el=document.createElement("button"); el.className="earn";
+    el.innerHTML=`<span class="emoji">${it.emoji||"⭐"}</span><span class="nm">${esc(it.name)}</span><span class="amt">+${it.min}m</span>`;
+    el.onclick=()=>earn(it); g.appendChild(el);
+  });
+}
+function renderLose(){
+  const l=$("#loseList"); l.innerHTML="";
+  if(!state.lose.length){l.innerHTML='<div class="empty">No take-away items. Add some in ⚙️.</div>';return;}
+  state.lose.forEach(it=>{
+    const el=document.createElement("button"); el.className="loseitem";
+    el.innerHTML=`<span class="emoji">${it.emoji||"⛔"}</span><span class="nm">${esc(it.name)}</span><span class="amt">−${it.min}m</span>`;
+    el.onclick=()=>askLose(it); l.appendChild(el);
+  });
+}
+function renderAll(){renderHeader();renderHero();renderEarn();renderLose();}
+
+/* ---------- earn / lose ---------- */
+function earn(it){
+  if(state.session){toast("Stop gaming to change time");return;}
+  state.sec += it.min*60;
+  if(state.dailyCap>0 && state.sec>state.dailyCap*60){ state.sec=state.dailyCap*60; toast("Daily max reached"); }
+  state.log.unshift({ts:Date.now(),type:"earn",name:it.name,emoji:it.emoji,delta:it.min});
+  state.log=state.log.slice(0,200); floatFx(it.min,true); save(); renderHero();
+}
+let pendingLose=null;
+function askLose(it){
+  if(state.session){toast("Stop gaming to change time");return;}
+  pendingLose=it;
+  $("#cEmoji").textContent=it.emoji||"⚠️";
+  $("#cLine").textContent="Take away "+it.min+" minutes?";
+  $("#cSub").textContent=it.name+" · "+fmtBank(state.sec)+" banked now";
+  $("#cOk").textContent="Take it away"; $("#cOk").className="btn red";
+  $("#confirmScrim").classList.add("open");
+}
+function doLose(it){
+  state.sec=Math.max(0, state.sec - it.min*60);
+  state.log.unshift({ts:Date.now(),type:"lose",name:it.name,emoji:it.emoji,delta:-it.min});
+  state.log=state.log.slice(0,200); floatFx(it.min,false); save(); renderHero();
+}
+$("#cCancel").onclick=()=>{$("#confirmScrim").classList.remove("open");pendingLose=null;};
+$("#cOk").onclick=()=>{ if(pendingLose){doLose(pendingLose);} $("#confirmScrim").classList.remove("open"); pendingLose=null; };
+$("#confirmScrim").onclick=e=>{if(e.target===$("#confirmScrim")){$("#confirmScrim").classList.remove("open");pendingLose=null;}};
+
+/* ---------- gaming timer ---------- */
+function remainingSec(){
+  if(!state.session) return state.sec;
+  const el=Math.floor((Date.now()-state.session.startTs)/1000);
+  return Math.max(0, state.session.startSec - el);
+}
+$("#playBtn").onclick=()=>{ state.session? stopSession(false) : startSession(); };
+function startSession(){
+  if(state.sec<=0){toast("No game time banked yet");return;}
+  state.session={startTs:Date.now(), startSec:state.sec};
+  save(); renderHero();
+  clearInterval(sessionInterval); sessionInterval=setInterval(tick,1000);
+}
+function tick(){
+  const r=remainingSec();
+  $("#bankEl").textContent=fmtClock(r);
+  const capSec=state.dailyCap>0?state.dailyCap*60:Math.max(state.session?state.session.startSec:r,7200);
+  $("#barEl").style.width=Math.min(100,(r/capSec)*100)+"%";
+  $("#barEl").classList.toggle("low", r>0 && r<15*60);
+  if(r<=0) stopSession(true);
+}
+function stopSession(ranOut){
+  clearInterval(sessionInterval); sessionInterval=null;
+  const r=remainingSec();
+  const used = state.session ? (state.session.startSec - r) : 0;
+  state.sec=Math.max(0,r);
+  if(used>0) state.log.unshift({ts:Date.now(),type:"use",name:"Game time used",emoji:"🎮",delta:-Math.round(used/60)});
+  state.log=state.log.slice(0,200);
+  state.session=null; save(); renderAll();
+  if(ranOut) toast("⏰ Time's up!");
+}
+
+/* ---------- PIN ---------- */
+let pinRes=null;
+function requirePin(){return new Promise(res=>{ if(!state.pin){res(true);return;} pinRes=res; $("#pinInput").value=""; $("#pinScrim").classList.add("open"); setTimeout(()=>$("#pinInput").focus(),50); });}
+$("#pinOk").onclick=()=>{ if($("#pinInput").value===state.pin){$("#pinScrim").classList.remove("open");pinRes&&pinRes(true);pinRes=null;} else toast("Wrong PIN"); };
+$("#pinCancel").onclick=()=>{$("#pinScrim").classList.remove("open");pinRes&&pinRes(false);pinRes=null;};
+
+/* ---------- settings ---------- */
+$("#gearBtn").onclick=async()=>{ if(state.session){toast("Stop gaming first");return;} const ok=await requirePin(); if(!ok)return; buildTab("earn"); $("#setScrim").classList.add("open"); };
+$("#setClose").onclick=()=>{$("#setScrim").classList.remove("open");renderAll();};
+document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); t.classList.add("active");
+  ["earn","lose","day","log"].forEach(n=>$("#tab-"+n).style.display=(n===t.dataset.tab)?"block":"none");
+  buildTab(t.dataset.tab);
+};});
+function buildTab(w){ if(w==="earn")buildItems("earn"); else if(w==="lose")buildItems("lose"); else if(w==="day")buildDay(); else buildLog(); }
+
+function buildItems(kind){
+  const c=$("#tab-"+kind); c.innerHTML="";
+  const hint=document.createElement("p"); hint.className="hint";
+  hint.textContent = kind==="earn"
+    ? "Things that earn game time. Tap the emoji, name, or minutes to edit."
+    : "Things that cost game time when an expected task is missed. Tip: keep each a little smaller than the matching earn, so a rough afternoon can't erase a good morning.";
+  c.appendChild(hint);
+  const arr = kind==="earn"?state.earn:state.lose;
+  arr.forEach((it,i)=>c.appendChild(editRow(kind,it,i)));
+  const add=document.createElement("button"); add.className="add"; add.textContent=kind==="earn"?"+ Add earn item":"+ Add take-away item";
+  add.onclick=()=>{ arr.push({id:uid(),emoji:kind==="earn"?"⭐":"⛔",name:"New item",min:kind==="earn"?15:15}); save(); buildItems(kind); };
+  c.appendChild(add);
+}
+function editRow(kind,it,i){
+  const row=document.createElement("div"); row.className="editrow";
+  row.innerHTML=`<input class="em" type="text" value="${esc(it.emoji)}" maxlength="2"/>
+    <input class="nm" type="text" value="${esc(it.name)}"/>
+    <input class="vl" type="number" value="${it.min}" inputmode="numeric"/>
+    <button class="del">×</button>`;
+  const [em,nm,vl]=row.querySelectorAll("input");
+  em.oninput=e=>{it.emoji=e.target.value;save();};
+  nm.oninput=e=>{it.name=e.target.value;save();};
+  vl.oninput=e=>{let n=parseInt(e.target.value,10);if(isNaN(n))n=0;it.min=Math.max(0,n);save();};
+  row.querySelector(".del").onclick=()=>{ (kind==="earn"?state.earn:state.lose).splice(i,1); save(); buildItems(kind); };
+  return row;
+}
+
+function buildDay(){
+  const c=$("#tab-day"); c.innerHTML="";
+  // name
+  const nf=document.createElement("div"); nf.className="field";
+  nf.innerHTML=`<label>Child's name / title</label><input type="text" id="nameIn" value="${esc(state.name)}"/>`;
+  c.appendChild(nf);
+  nf.querySelector("#nameIn").oninput=e=>{state.name=e.target.value;save();$("#nameLabel").textContent=state.name||"Game Time";};
+
+  // daily cap
+  const cf=document.createElement("div"); cf.className="field";
+  cf.innerHTML=`<label>Daily cap in minutes (0 = no cap)</label><input type="number" id="capIn" value="${state.dailyCap}" inputmode="numeric"/>`;
+  c.appendChild(cf);
+  cf.querySelector("#capIn").oninput=e=>{let n=parseInt(e.target.value,10);if(isNaN(n))n=0;state.dailyCap=Math.max(0,n);save();};
+
+  // streak control
+  const sl=document.createElement("label"); sl.style.cssText="display:block;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:6px 2px 8px;font-weight:600;"; sl.textContent="Good-day streak";
+  c.appendChild(sl);
+  const sc=document.createElement("div"); sc.className="streakctl";
+  sc.innerHTML=`<button class="stepbtn" id="sDown">−</button><div class="val">🔥 ${state.streak}</div><button class="stepbtn" id="sUp">+</button>`;
+  c.appendChild(sc);
+  sc.querySelector("#sUp").onclick=()=>{state.streak++;save();buildDay();renderHeader();};
+  sc.querySelector("#sDown").onclick=()=>{state.streak=Math.max(0,state.streak-1);save();buildDay();renderHeader();};
+
+  // carry over toggle
+  const tg=document.createElement("div"); tg.className="toggle";
+  tg.innerHTML=`<div><div style="font-weight:600">Carry banked time to next day</div><div class="ti">Off = each day starts at zero (a daily allowance). On = leftover time rolls over.</div></div><div class="sw ${state.carryOver?'on':''}" id="coSw"></div>`;
+  c.appendChild(tg);
+  tg.querySelector("#coSw").onclick=e=>{state.carryOver=!state.carryOver;e.target.classList.toggle("on",state.carryOver);save();};
+
+  // manual adjust
+  const af=document.createElement("div"); af.className="field";
+  af.innerHTML=`<label>Adjust time now — minutes (have ${fmtBank(state.sec)})</label>
+    <div class="row"><input type="number" id="adjIn" placeholder="e.g. 15 or -15" inputmode="numeric"/><button class="btn cyan" id="adjBtn" style="flex:0 0 92px">Apply</button></div>`;
+  c.appendChild(af);
+  af.querySelector("#adjBtn").onclick=()=>{ let v=parseInt(af.querySelector("#adjIn").value,10); if(!v)return;
+    state.sec=Math.max(0,state.sec+v*60);
+    if(state.dailyCap>0&&state.sec>state.dailyCap*60)state.sec=state.dailyCap*60;
+    state.log.unshift({ts:Date.now(),type:v>0?"earn":"lose",name:"Manual adjust",emoji:"✏️",delta:v}); save(); buildDay(); };
+
+  // end-of-day
+  const el=document.createElement("label"); el.style.cssText=sl.style.cssText; el.textContent="End the day"; c.appendChild(el);
+  const eh=document.createElement("p"); eh.className="hint"; eh.textContent="Mark how the day went (updates the streak), then the balance "+(state.carryOver?"carries over":"resets to zero")+"."; c.appendChild(eh);
+  const er=document.createElement("div"); er.className="row"; er.style.marginBottom="10px";
+  const good=document.createElement("button"); good.className="btn lime"; good.textContent="Good day 👍";
+  const rough=document.createElement("button"); rough.className="btn red"; rough.textContent="Rough day 👎";
+  er.appendChild(good); er.appendChild(rough); c.appendChild(er);
+  good.onclick=()=>endDay(true); rough.onclick=()=>endDay(false);
+
+  // PIN
+  const pf=document.createElement("div"); pf.className="field"; pf.style.marginTop="16px";
+  pf.innerHTML=`<label>Parent PIN (blank = no lock)</label><input type="text" id="pinSet" inputmode="numeric" value="${esc(state.pin)}" placeholder="e.g. 1234"/>`;
+  c.appendChild(pf);
+  pf.querySelector("#pinSet").oninput=e=>{state.pin=e.target.value.trim();save();};
+}
+function endDay(wasGood){
+  state.streak = wasGood ? state.streak+1 : 0;
+  state.log.unshift({ts:Date.now(),type:"day",name:wasGood?"Good day logged":"Rough day logged",emoji:wasGood?"🔥":"🔁",delta:0});
+  if(!state.carryOver) state.sec=0;
+  save(); renderAll(); buildDay();
+  toast(wasGood ? ("Nice — "+state.streak+" day streak"+(state.streak>=3?"! Tap the streak bonus.":"")) : "New day, fresh start");
+}
+
+function buildLog(){
+  const c=$("#tab-log"); c.innerHTML="";
+  if(!state.log.length){ c.innerHTML='<div class="empty">Nothing logged yet.</div>'; }
+  else state.log.slice(0,60).forEach(e=>{
+    const r=document.createElement("div"); r.className="logrow";
+    const d = e.delta>0?`<div class="d plus">+${e.delta}m</div>` : (e.delta<0?`<div class="d minus">${e.delta}m</div>`:`<div class="d" style="color:var(--muted)">—</div>`);
+    r.innerHTML=`<div><div>${e.emoji||""} ${esc(e.name)}</div><div class="when">${fmtTime(e.ts)}</div></div>${d}`;
+    c.appendChild(r);
+  });
+  const wrap=document.createElement("div"); wrap.className="row"; wrap.style.marginTop="14px";
+  const clr=document.createElement("button"); clr.className="btn ghost"; clr.textContent="Clear log";
+  clr.onclick=()=>{ if(confirm("Clear the log? Time and streak stay the same.")){state.log=[];save();buildLog();} };
+  const rst=document.createElement("button"); rst.className="btn red"; rst.textContent="Reset time to 0";
+  rst.onclick=()=>{ if(confirm("Set banked time to 0?")){state.sec=0;state.log.unshift({ts:Date.now(),type:"lose",name:"Reset to 0",emoji:"🔄",delta:0});save();renderHero();buildLog();} };
+  wrap.appendChild(clr); wrap.appendChild(rst); c.appendChild(wrap);
+}
+$("#setScrim").onclick=e=>{if(e.target===$("#setScrim")){$("#setScrim").classList.remove("open");renderAll();}};
+
+/* ---------- init ---------- */
+(async function init(){
+  const saved=await store.get();
+  state = saved && saved.earn ? Object.assign({},DEFAULT,saved) : JSON.parse(JSON.stringify(DEFAULT));
+  // resume or expire an in-progress session
+  if(state.session){
+    const r=remainingSec();
+    if(r<=0){ state.sec=0; state.log.unshift({ts:Date.now(),type:"use",name:"Game time used (ran out)",emoji:"🎮",delta:-Math.round(state.session.startSec/60)}); state.session=null; save(); }
+    else { sessionInterval=setInterval(tick,1000); }
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
