@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// =====================================================================
+// PBH Family Sync — Firestore security rules
+// © 2026 Greg Snyder, Ph.D. · Perspective Behavioral Health
+// ---------------------------------------------------------------------
+// Paste this whole file into Firebase console → Firestore Database →
+// Rules → Publish.  Use MODE 1 or MODE 2 (not both), and set
+// PBH_SYNC_MODE in pbh-sync-config.js to match.
+//
+// What these rules guarantee:
+//  • A phone can open only the exact family record whose code it holds.
+//  • Nobody can list or browse families (no "list" permission).
+//  • Nothing can be deleted from an app.
+//  • Writes must have exactly the app's own shape — nothing else can be
+//    stored here.
+// =====================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function validCode(c) { return c.matches('^[A-Z0-9]{8,24}$'); }
+    function validApp(a)  { return a in ['points', 'gametime', 'allowance']; }
+    function validDoc(a)  {
+      return request.resource.data.keys().hasOnly(['state', 'app', 'v', 'rev', 'updatedAt'])
+          && request.resource.data.app == a
+          && request.resource.data.state is map
+          && request.resource.data.rev is number;
+    }
+    function invited(c) {
+      return exists(/databases/$(database)/documents/allowedFamilies/$(c));
+    }
+
+    // ===== MODE 1: OPEN — any family can start a code ========================
+    // (matches PBH_SYNC_MODE = "open")
+    match /families/{code}/apps/{app} {
+      allow get:            if validCode(code) && validApp(app);
+      allow create, update: if validCode(code) && validApp(app) && validDoc(app);
+    }
+
+    // ===== MODE 2: INVITE-ONLY — only codes you add under allowedFamilies ====
+    // To switch: delete the MODE 1 block above, remove the // from the four
+    // lines below, publish, and set PBH_SYNC_MODE = "invite".
+    // match /families/{code}/apps/{app} {
+    //   allow get:            if validCode(code) && validApp(app) && invited(code);
+    //   allow create, update: if validCode(code) && validApp(app) && validDoc(app) && invited(code);
+    // }
+
+    // allowedFamilies has no rules on purpose: phones can't read or write it.
+    // You manage it in the Firebase console, which isn't bound by these rules.
+  }
+}
