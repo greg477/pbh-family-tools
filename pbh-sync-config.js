@@ -12,12 +12,12 @@
    (firestore.rules), so make sure those are published.
    ===================================================================== */
 window.PBH_FIREBASE_CONFIG = {
-  apiKey: "PASTE_API_KEY",
+  apiKey: "AIzaSyB1YMOAyU-zgp02iYu4qkJQJg3MyCgZBUY",
   authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  projectId: "pbh-family-tools-f2911",
+  storageBucket: "pbh-family-tools-f2911.firebasestorage.app",
+  messagingSenderId: "29490368396",
+  appId: "1:29490368396:web:ad8f26d5d5cd75e8f110a9"
 };
 
 /* Who can start a family?
