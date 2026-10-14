@@ -13,7 +13,7 @@
    ===================================================================== */
 window.PBH_FIREBASE_CONFIG = {
   apiKey: "AIzaSyB1YMOAyU-zgp02iYu4qkJQJg3MyCgZBUY",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
+  authDomain: "pbh-family-tools-f2911.firebaseapp.com",
   projectId: "pbh-family-tools-f2911",
   storageBucket: "pbh-family-tools-f2911.firebasestorage.app",
   messagingSenderId: "29490368396",
