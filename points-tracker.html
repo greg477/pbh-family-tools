@@ -848,10 +848,15 @@ const SYNC_APP={
   screenState:(s,sub)=>({children:s.children.filter(c=>childSub(c)===sub)}),
   btn:{primary:"btn primary",ghost:"btn ghost",danger:"btn warn"},
   isChild:IS_CHILD, childWord:"child", childShows:"the point total, the prize jar, and how close each prize is",
+  // the watch line for one child's screen (s is that screen's copy: just that child)
+  watchText:s=>{ const c=(s.children||[])[0]; if(!c) return "";
+    const pts=Math.max(0,Math.round(c.points||0)), pr=c.prizes||[];
+    const next=pr.filter(p=>p.cost>pts).sort((a,b)=>a.cost-b.cost)[0], ready=pr.some(p=>p.cost<=pts);
+    return pts+" point"+(pts===1?"":"s")+(next?" · "+(next.cost-pts)+" more for "+next.name:(ready?" · a prize is ready!":"")); },
   toast:m=>toast(m)
 };
 /* =====================================================================
-   PBH FAMILY SYNC v1.1 — optional sharing between a family's phones
+   PBH FAMILY SYNC v1.2 — optional sharing between a family's phones
    © 2026 Greg Snyder, Ph.D. · Perspective Behavioral Health
    ---------------------------------------------------------------------
    OFF until a family taps "Start a family" or "Join" in Settings → Sync.
@@ -873,6 +878,9 @@ const SYNC_APP={
    in SYNC_APP.screens; each child's screen gets its own link and shows
    only that child (SYNC_APP.screenState). Apps without SYNC_APP.screens
    behave exactly as v1.1, and their existing links keep working.
+   v1.2 — the child's copy also carries a one-line summary (state._show)
+   that /api/watch hands to an Apple Watch shortcut as plain text. With
+   one screen per child, each screen's summary is about that child only.
    ===================================================================== */
 const PBHSync=(()=>{
   const A=SYNC_APP, FBV="10.12.2", CFG="pbh-sync-config.js", MK=A.localKey+":sync";
@@ -1140,6 +1148,12 @@ const PBHSync=(()=>{
     catch(e){ if(!(e&&e.code==="permission-denied")) throw e; }   // already registered on an earlier visit (keys can't be rewritten)
     if(!isObj(meta.keys)) meta.keys={}; meta.keys[tag]=1; saveMeta();
   }
+  function screenState(s,sub){                     // one screen's copy: only its child (SCRSTATE), no PIN, plus a one-line summary for the watch
+    const f=SCRSTATE(s,sub), o=redact(cl(f));
+    try{ const w=A.watchText&&A.watchText(f); if(w) o._show=String(w).replace(/["\\\n\r]/g,"").slice(0,140); }catch(e){}
+    return o;
+  }
+  const WATCH_NOTE='<p class="pbhs-note">For a watch paired with its own iPhone (not a Family Setup watch). Copy the watch link and follow the "Child\'s screen &amp; watch" guide (next to Phone Sync on our website) to make a one-tap watch shortcut.</p>';
   const scrWhy=e=>e&&e.code==="permission-denied"?"Couldn't update the "+KID+"'s screen. (Site owner: publish the latest firestore.rules.)":why(e);
   async function mirror(){
     if(!meta.code||meta.viewOnly||!meta.base||!navigator.onLine) return;
@@ -1158,7 +1172,7 @@ const PBHSync=(()=>{
       const rev=meta.rev||0;
       if((+s.data().rev||0)>=rev){ setScr(sub,true,""); return; }
       await ensureKey(v,sub);
-      const st=redact(cl(SCRSTATE(meta.base,sub)));
+      const st=screenState(meta.base,sub);
       await db.runTransaction(async tx=>{ const x=await tx.get(r);
         if(!x.exists||(+x.data().rev||0)>=rev) return;     // turned off meanwhile, or another parent's phone already sent this
         tx.set(r,{state:st,app:A.id,rev,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); });
@@ -1167,7 +1181,7 @@ const PBHSync=(()=>{
   }
   async function screenOn(sub){
     await fb(); const v=await screenId(meta.code,sub); scrOf(sub).id=v; await ensureKey(v,sub);
-    await screenDoc(v).set({state:redact(cl(SCRSTATE(meta.base||A.get(),sub))),app:A.id,rev:meta.rev||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    await screenDoc(v).set({state:screenState(meta.base||A.get(),sub),app:A.id,rev:meta.rev||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
   }
   async function screenOff(sub){ await fb(); const v=await screenId(meta.code,sub); await ensureKey(v,sub); await screenDoc(v).delete(); }
   /* a child was removed from the app: take their screen down too (best effort; nothing to do when not syncing) */
@@ -1189,12 +1203,15 @@ const PBHSync=(()=>{
       if(S.on===null) x+='<p class="pbhs-note">Checking…</p>';
       else if(!S.on) x+='<button class="'+B.primary+' pbhs-full" data-act="on" data-i="'+i+'">Set up '+who+'\'s screen</button>';
       else x+='<div class="row pbhs-row"><button class="'+B.ghost+'" data-act="copy" data-i="'+i+'">Copy link</button><button class="'+B.primary+'" data-act="send" data-i="'+i+'">Send '+who+' link</button></div>'
-        +(many?'':'<p class="pbhs-note">Open the link on your '+h(KID)+'\'s device in Safari, then tap Share → Add to Home Screen.</p>')
+        +(many?'':'<p class="pbhs-note">Open the link on your '+h(KID)+'\'s device in Safari, then tap Share → Add to Home Screen.</p>'
+          +'<label class="pbhs-lab" style="margin-top:14px">Apple Watch (optional)</label>'+WATCH_NOTE)
+        +'<button class="'+B.ghost+' pbhs-full" data-act="watch" data-i="'+i+'" style="margin-bottom:'+(many?'10':'14')+'px">Copy '+(many?who+'\'s ':'')+'watch link</button>'
         +'<button class="'+B.ghost+' pbhs-full" data-act="off" data-i="'+i+'">Turn off '+who+'\'s screen</button>';
       if(S.err) x+='<div class="pbhs-err" style="margin-top:10px">'+h(S.err)+'</div>';
       if(many) x+='</div>';
     });
     if(many) x+='<p class="pbhs-note">Open each link on that '+h(KID)+'\'s device in Safari, then tap Share → Add to Home Screen.</p>';
+    if(many&&list.some(it=>scrOf(it.sub).on)) x+='<label class="pbhs-lab" style="margin-top:4px">Apple Watch (optional)</label>'+WATCH_NOTE.replace("Copy the watch link","Each "+h(KID)+" has their own watch link. Copy it");
     el.innerHTML=x+'<div style="height:16px"></div>';
     el.querySelectorAll("[data-act]").forEach(b=>{
       const it=list[+b.dataset.i], sub=it.sub, S=scrOf(sub), nm=many?(it.label||KIDC):KIDC, link=location.origin+location.pathname+"?view=child&screen="+S.id;
@@ -1203,6 +1220,7 @@ const PBHSync=(()=>{
       const act=b.dataset.act;
       if(act==="on") b.onclick=busy(async()=>{ await screenOn(sub); setScr(sub,true,""); A.toast(nm+"'s screen is on — now send the link"); });
       else if(act==="copy") b.onclick=()=>copy(link,nm+" link copied");
+      else if(act==="watch") b.onclick=()=>copy(location.origin+"/api/watch?s="+S.id,(many?nm+"'s w":"W")+"atch link copied");
       else if(act==="send") b.onclick=()=>share(link,(many?nm+"'s ":"Your ")+A.name+" — live view:",nm+" link copied");
       else if(act==="off") b.onclick=()=>{ if(confirm("Turn off "+(many?nm+"'s":"the "+KID+"'s")+" screen? It stops updating and shows a \"not switched on\" message. Turning it back on later uses the same link.")) busy(async()=>{ await screenOff(sub); setScr(sub,false,""); A.toast(nm+"'s screen turned off"); })(); };
     });
