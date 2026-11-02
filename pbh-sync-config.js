@@ -24,5 +24,7 @@ window.PBH_FIREBASE_CONFIG = {
    "open"   — any family can tap "Start a family" and make their own code.
    "invite" — no Start button; only codes YOU create in the Firebase
               console (collection allowedFamilies) will work.
-   This must match the rules block you published in firestore.rules. */
+   This must match inviteOnly() in the firestore.rules you published.
+   Child's view-only screens also need Anonymous sign-in turned on:
+   Firebase console → Authentication → Sign-in method → Anonymous. */
 window.PBH_SYNC_MODE = "open";

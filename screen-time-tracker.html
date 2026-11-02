@@ -212,6 +212,7 @@
 .pbhs-cmp>div{flex:1;background:#1C2436;border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:12px;text-align:center;}
 .pbhs-cmp b{display:block;font-size:.74rem;letter-spacing:.5px;text-transform:uppercase;color:#8FA0BF;margin-bottom:4px;}
 .pbhs-cmp span{font-weight:700;color:#EAF0FA;font-size:.92rem;}
+.childbanner{background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.35);color:var(--cyan);font-weight:700;font-size:.84rem;text-align:center;padding:8px 10px;border-radius:12px;margin:0 0 12px;}
 </style>
 </head>
 <body>
@@ -221,6 +222,8 @@
     <div class="streak" id="streakChip">🔥 0</div>
     <span class="pbhs-pill" id="pbhsPill" hidden></span><button class="gear" id="gearBtn" aria-label="Parent settings">⚙️</button>
   </div>
+
+  <div id="childBanner" class="childbanner" style="display:none">Look-only screen — parents add and take away time on their phones.</div>
 
   <div class="hero">
     <div class="fx" id="fx"></div>
@@ -239,7 +242,7 @@
   </div>
 
   <div id="gamingZone" style="display:none">
-    <div class="gamingnote">Gaming in progress — the clock is running. Stop to bank the time that's left.</div>
+    <div class="gamingnote" id="gamingNote">Gaming in progress — the clock is running. Stop to bank the time that's left.</div>
   </div>
 
   <div class="pbh-credit">
@@ -306,6 +309,8 @@
 <script>
 /* ---------- storage adapter ---------- */
 const KEY="screen-time-app-v1";
+// Child's view-only screen = ?view=child, or a device already set up as one (stays that way).
+const IS_CHILD = new URLSearchParams(location.search).get("view")==="child" || (()=>{ try{ const m=JSON.parse(localStorage.getItem(KEY+":sync")||"null"); return !!(m&&(m.viewOnly||m.screen)); }catch(e){ return false; } })();
 const store=(()=>{
   const w=(typeof window!=="undefined"&&window.storage&&typeof window.storage.get==="function");
   if(w) return {async get(){try{const r=await window.storage.get(KEY);return r?JSON.parse(r.value):null;}catch(e){return null;}},
@@ -410,6 +415,10 @@ function renderHero(){
   // zones
   $("#normalZone").style.display = gaming?"none":"block";
   $("#gamingZone").style.display = gaming?"block":"none";
+  if(IS_CHILD){
+    btn.style.display="none"; $("#normalZone").style.display="none"; $("#gearBtn").style.display="none";
+    $("#childBanner").style.display="block"; $("#gamingNote").textContent="Gaming in progress — the clock is running.";
+  }
 }
 function renderEarn(){
   const g=$("#earnGrid"); g.innerHTML="";
@@ -433,6 +442,7 @@ function renderAll(){renderHeader();renderHero();renderEarn();renderLose();}
 
 /* ---------- earn / lose ---------- */
 function earn(it){
+  if(IS_CHILD) return;
   if(state.session){toast("Stop gaming to change time");return;}
   state.sec += it.min*60;
   if(state.dailyCap>0 && state.sec>state.dailyCap*60){ state.sec=state.dailyCap*60; toast("Daily max reached"); }
@@ -441,6 +451,7 @@ function earn(it){
 }
 let pendingLose=null;
 function askLose(it){
+  if(IS_CHILD) return;
   if(state.session){toast("Stop gaming to change time");return;}
   pendingLose=it;
   $("#cEmoji").textContent=it.emoji||"⚠️";
@@ -450,6 +461,7 @@ function askLose(it){
   $("#confirmScrim").classList.add("open");
 }
 function doLose(it){
+  if(IS_CHILD) return;
   state.sec=Math.max(0, state.sec - it.min*60);
   state.log.unshift({ts:Date.now(),type:"lose",name:it.name,emoji:it.emoji,delta:-it.min});
   state.log=state.log.slice(0,200); floatFx(it.min,false); save(); renderHero();
@@ -464,8 +476,9 @@ function remainingSec(){
   const el=Math.floor((Date.now()-state.session.startTs)/1000);
   return Math.max(0, state.session.startSec - el);
 }
-$("#playBtn").onclick=()=>{ state.session? stopSession(false) : startSession(); };
+$("#playBtn").onclick=()=>{ if(IS_CHILD) return; state.session? stopSession(false) : startSession(); };
 function startSession(){
+  if(IS_CHILD) return;
   if(state.sec<=0){toast("No game time banked yet");return;}
   state.session={startTs:Date.now(), startSec:state.sec};
   save(); renderHero();
@@ -477,9 +490,10 @@ function tick(){
   const capSec=state.dailyCap>0?state.dailyCap*60:Math.max(state.session?state.session.startSec:r,7200);
   $("#barEl").style.width=Math.min(100,(r/capSec)*100)+"%";
   $("#barEl").classList.toggle("low", r>0 && r<15*60);
-  if(r<=0) stopSession(true);
+  if(r<=0){ if(IS_CHILD){ clearInterval(sessionInterval); sessionInterval=null; return; } stopSession(true); }
 }
 function stopSession(ranOut){
+  if(IS_CHILD) return;
   clearInterval(sessionInterval); sessionInterval=null;
   const r=remainingSec();
   const used = state.session ? (state.session.startSec - r) : 0;
@@ -497,7 +511,7 @@ $("#pinOk").onclick=()=>{ if($("#pinInput").value===state.pin){$("#pinScrim").cl
 $("#pinCancel").onclick=()=>{$("#pinScrim").classList.remove("open");pinRes&&pinRes(false);pinRes=null;};
 
 /* ---------- settings ---------- */
-$("#gearBtn").onclick=async()=>{ if(state.session){toast("Stop gaming first");return;} const ok=await requirePin(); if(!ok)return; buildTab("earn"); $("#setScrim").classList.add("open"); };
+$("#gearBtn").onclick=async()=>{ if(IS_CHILD) return; if(state.session){toast("Stop gaming first");return;} const ok=await requirePin(); if(!ok)return; buildTab("earn"); $("#setScrim").classList.add("open"); };
 $("#setClose").onclick=()=>{$("#setScrim").classList.remove("open");renderAll();};
 document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); t.classList.add("active");
@@ -633,10 +647,11 @@ const SYNC_APP={
     renderAll();
   },
   btn:{primary:"btn cyan",ghost:"btn ghost",danger:"btn red"},
-  isChild:false, toast:m=>toast(m)
+  isChild:IS_CHILD, childWord:"child", childShows:"banked game time, the live countdown while they play, and their streak",
+  toast:m=>toast(m)
 };
 /* =====================================================================
-   PBH FAMILY SYNC v1.0 — optional sharing between a family's phones
+   PBH FAMILY SYNC v1.1 — optional sharing between a family's phones
    © 2026 Greg Snyder, Ph.D. · Perspective Behavioral Health
    ---------------------------------------------------------------------
    OFF until a family taps "Start a family" or "Join" in Settings → Sync.
@@ -648,6 +663,12 @@ const SYNC_APP={
    parents tapping at the same moment both count, and changes made
    offline catch up later. This block is identical in every PBH app;
    only the SYNC_APP settings above it differ.
+   v1.1 — child's view-only screen: parents' phones keep a separate,
+   read-only copy (no PIN, no family code) at views/<screen id>. The
+   child's device only ever holds the screen id, and the security rules
+   only let a phone that proves it knows the family code write there —
+   so the child's screen can look, but it can't add, take away, or
+   change anything, even if someone edits the link.
    ===================================================================== */
 const PBHSync=(()=>{
   const A=SYNC_APP, FBV="10.12.2", CFG="pbh-sync-config.js", MK=A.localKey+":sync";
@@ -659,6 +680,17 @@ const PBHSync=(()=>{
   const pretty=c=>norm(c).replace(/(.{4})(?=.)/g,"$1-");
   const mode=()=>window.PBH_SYNC_MODE==="invite"?"invite":"open";
   const err=(code,m)=>Object.assign(new Error(m||code),{code});
+  const Q=(()=>{ try{ return new URLSearchParams(location.search); }catch(e){ return new URLSearchParams(""); } })();
+  const KID=A.childWord||"child", KIDC=KID.charAt(0).toUpperCase()+KID.slice(1), TAB=A.syncTab||"Sync";
+  const normScreen=s=>String(s||"").toLowerCase().replace(/[^a-f0-9]/g,"");
+  /* the child's copy never carries a PIN (any key named "pin", at any depth) */
+  function redact(x){ if(Array.isArray(x)) return x.map(redact); if(!isObj(x)) return x; const o={}; for(const k of Object.keys(x)) if(k!=="pin") o[k]=redact(x[k]); return o; }
+  /* screen id = SHA-256 of the family code + app. One-way: the id can't be turned back into the code. */
+  async function screenId(code){
+    if(!(window.crypto&&crypto.subtle)) throw err("insecure");
+    const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("pbh-view:"+norm(code)+":"+A.id));
+    return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("");
+  }
 
   /* ---------- deep equality (key order doesn't matter) ---------- */
   function deq(a,b){
@@ -730,8 +762,9 @@ const PBHSync=(()=>{
 
   /* ---------- this phone's sync settings (separate key; app data key is untouched) ---------- */
   function readMeta(){ try{ const m=JSON.parse(localStorage.getItem(MK)||"null"); return isObj(m)?m:{}; }catch(e){ return {}; } }
-  function saveMeta(){ try{ if(meta.code) localStorage.setItem(MK,JSON.stringify(meta)); else localStorage.removeItem(MK); }catch(e){} }
-  let meta=readMeta(), db=null, ref=null, unsub=null, status=meta.code?"connecting":"off", msg="", lastAt=0;
+  function saveMeta(){ try{ if(meta.code||meta.screen) localStorage.setItem(MK,JSON.stringify(meta)); else localStorage.removeItem(MK); }catch(e){} }
+  let meta=readMeta(), db=null, ref=null, unsub=null, status=(meta.code||meta.screen)?"connecting":"off", msg="", lastAt=0;
+  function joined(){ return !!(meta.code||meta.screen); }
   let pushT=null, retryT=null, pushing=false, again=false, queued=null, panelEl=null, booted=false, cfgState=window.PBH_FIREBASE_CONFIG?"done":"none";
 
   /* ---------- Firebase is fetched only for families that turn sync on ---------- */
@@ -746,22 +779,39 @@ const PBHSync=(()=>{
       await loadScript("https://www.gstatic.com/firebasejs/"+FBV+"/firebase-firestore-compat.js");
     }
     if(!firebase.apps.length) firebase.initializeApp(cfg);
-    db=firebase.firestore(); return db;
+    db=firebase.firestore();
+    const em=window.PBH_FIREBASE_EMULATOR; if(em&&em.firestore) db.useEmulator(em.host||"127.0.0.1",em.firestore);   // local testing only
+    return db;
+  }
+  /* Anonymous sign-in — only parents' phones that publish a child's screen ever load this */
+  let authP=null;
+  function auth(){
+    if(authP) return authP;
+    authP=(async()=>{
+      await fb();
+      if(!firebase.auth) await loadScript("https://www.gstatic.com/firebasejs/"+FBV+"/firebase-auth-compat.js");
+      const a=firebase.auth(), em=window.PBH_FIREBASE_EMULATOR;
+      if(em&&em.auth&&!a.emulatorConfig) a.useEmulator("http://"+(em.host||"127.0.0.1")+":"+em.auth,{disableWarnings:true});
+      const u=a.currentUser||await new Promise(ok=>{ const off=a.onAuthStateChanged(x=>{ off(); ok(x); }); });
+      return u||(await a.signInAnonymously()).user;
+    })().catch(e=>{ authP=null; throw e; });
+    return authP;
   }
   const docFor=c=>db.collection("families").doc(c).collection("apps").doc(A.id);
+  const screenDoc=v=>db.collection("views").doc(v);
   const stamp=(s,rev)=>({state:cl(s),app:A.id,v:1,rev,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
 
   /* ---------- status (pill in the header + line in Settings → Sync) ---------- */
   const LABEL={connecting:"Connecting…",live:"Synced",offline:"Offline",error:"Sync problem"};
   function setStatus(s,m){ status=s; if(m!==undefined) msg=m; paint(); }
   function paint(){
-    const t=status==="offline"&&meta.dirty?"Offline · will sync":(LABEL[status]||"");
+    const t=status==="offline"&&meta.dirty?"Offline · will sync":(meta.screen&&status==="live"?"Live":(LABEL[status]||""));
     const p=document.getElementById("pbhsPill");
-    if(p){ if(!meta.code) p.hidden=true; else { p.hidden=false; p.className="pbhs-pill "+status; p.innerHTML='<span class="d"></span>'+h(t); } }
+    if(p){ if(!joined()) p.hidden=true; else { p.hidden=false; p.className="pbhs-pill "+status; p.innerHTML='<span class="d"></span>'+h(t); } }
     const s=document.getElementById("pbhsStatus");
     if(s){ s.className="pbhs-status "+status; s.innerHTML='<span class="d"></span>'+h(t)+(status==="live"&&lastAt?'<span class="pbhs-when"> · '+new Date(lastAt).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+'</span>':''); }
     const e=document.getElementById("pbhsErr");
-    if(e){ const show=!!msg&&(status==="error"||!meta.code); e.hidden=!show; e.textContent=show?msg:""; }
+    if(e){ const show=!!msg&&(status==="error"||!joined()); e.hidden=!show; e.textContent=show?msg:""; }
   }
   function why(e){
     const c=e&&e.code;
@@ -769,6 +819,11 @@ const PBHSync=(()=>{
     if(c==="permission-denied") return mode()==="invite"?"That family code isn't active. Check it, or ask whoever gave it to you.":"That family code was refused. Check it and try again.";
     if(c==="bad-code") return "That doesn't look like a family code. Check it and try again.";
     if(c==="not-found") return "No family found with that code yet. Turn on Family Sync on a parent's phone first.";
+    if(c==="not-set-up") return "This screen isn't switched on right now. A parent can turn it on in ⚙ → "+TAB+" → "+KIDC+"'s screen.";
+    if(c==="old-link") return "This is an older link that's no longer used. Ask a parent to send a new one from ⚙ → "+TAB+" → "+KIDC+"'s screen.";
+    if(c==="insecure") return "This page needs to be opened from its https:// web address.";
+    if(c==="auth/operation-not-allowed"||c==="auth/admin-restricted-operation") return "The "+KID+"'s screen needs one more switch on this website. (Site owner: Firebase console → Authentication → Sign-in method → turn on Anonymous.)";
+    if(c==="auth/network-request-failed") return "Can't reach the internet right now. Connect and try again.";
     if(c==="unavailable"||c==="deadline-exceeded"||!navigator.onLine) return "Can't reach the internet right now. Connect and try again — after that, it works offline too.";
     return "Something went wrong"+(c?" ("+c+")":"")+". Try again in a moment.";
   }
@@ -783,9 +838,14 @@ const PBHSync=(()=>{
 
   /* ---------- listen for the other phone's changes ---------- */
   async function connect(){
-    if(!meta.code||unsub) return;
+    if(!joined()||unsub) return;
     try{ await fb(); }catch(e){ setStatus(e.code==="not-configured"?"error":"offline",why(e)); retry(); return; }
-    if(!meta.code||unsub) return;
+    if(!joined()||unsub) return;
+    if(meta.screen){
+      ref=screenDoc(meta.screen);
+      unsub=ref.onSnapshot(onScreen,e=>{ unsub=null; setStatus("offline",why(e)); retry(); });
+      return;
+    }
     ref=docFor(meta.code);
     unsub=ref.onSnapshot(onSnap,e=>{ unsub=null; setStatus(e&&e.code==="permission-denied"?"error":"offline",why(e)); retry(); });
     if(meta.dirty) later(300);
@@ -797,8 +857,19 @@ const PBHSync=(()=>{
     if(pushing){ queued=snap; return; }               // a send is in flight: handle this right after, against the new base
     handleSnap(snap);
   }
+  function onScreen(snap){                            // child's view-only screen: show the parents' copy, never write
+    const md=snap.metadata||{};
+    if(md.fromCache){ if(status!=="live") setStatus(navigator.onLine?"connecting":"offline"); return; }
+    lastAt=Date.now();
+    const d=snap.exists?snap.data():null;
+    if(!d||!isObj(d.state)||d.app!==A.id){ setStatus("error",why(err("not-set-up"))); return; }
+    setStatus("live","");
+    const R=A.normalize(cl(d.state));
+    meta.rev=+d.rev||0; saveMeta();
+    if(!deq(R,cl(A.get()))) apply(R);
+  }
   function handleSnap(snap){
-    lastAt=Date.now(); setStatus("live","");
+    lastAt=Date.now(); setStatus("live",""); mirrorSoon(900);
     const d=snap.exists?snap.data():null;
     if(!d||!isObj(d.state)){ if(!meta.viewOnly){ meta.dirty=true; saveMeta(); later(200); } return; }
     const rev=+d.rev||0;
@@ -817,7 +888,7 @@ const PBHSync=(()=>{
 
   /* ---------- send this phone's changes (conflict-safe) ---------- */
   function later(ms){ if(!meta.code||meta.viewOnly) return; clearTimeout(pushT); pushT=setTimeout(push,ms==null?400:ms); }
-  function retry(){ clearTimeout(retryT); retryT=setTimeout(()=>{ if(!meta.code) return; if(!unsub) connect(); else if(meta.dirty) push(); },15000); }
+  function retry(){ clearTimeout(retryT); retryT=setTimeout(()=>{ if(!joined()) return; if(!unsub) connect(); else if(meta.dirty) push(); },15000); }
   async function push(){
     if(!meta.code||meta.viewOnly) return;
     if(pushing){ again=true; return; }
@@ -837,7 +908,7 @@ const PBHSync=(()=>{
       const C=cl(A.get());
       if(!deq(C,L)){ const F=merge3(L,C,M); A.clamp(F,C,M); apply(F); meta.dirty=true; again=true; }   // tapped again mid-sync
       else { if(!deq(C,M)) apply(M); meta.dirty=false; }
-      saveMeta(); setStatus("live","");
+      saveMeta(); setStatus("live",""); mirrorSoon();
       if(!unsub) connect();
     }catch(e){
       again=false; meta.dirty=true; saveMeta();
@@ -847,6 +918,64 @@ const PBHSync=(()=>{
       const q=queued; queued=null; if(q) handleSnap(q);
       if(again){ again=false; later(300); }
     }
+  }
+
+  /* ---------- child's view-only screen (parents' phones keep it current) ---------- */
+  let mirT=null, mirBusy=false, mirAgain=false, scrEl=null;
+  const scr={on:null,err:"",id:"",busy:false};
+  function mirrorSoon(ms){ if(!meta.code||meta.viewOnly) return; clearTimeout(mirT); mirT=setTimeout(mirror,ms==null?600:ms); }
+  async function ensureKey(v){                       // one-time: this phone proves it knows the family code (stored where no phone can read it)
+    const u=await auth();
+    if(meta.key===u.uid+":"+v) return;
+    try{ await screenDoc(v).collection("keys").doc(u.uid).set({code:meta.code,app:A.id}); }
+    catch(e){ if(!(e&&e.code==="permission-denied")) throw e; }   // already registered on an earlier visit (keys can't be rewritten)
+    meta.key=u.uid+":"+v; saveMeta();
+  }
+  const scrWhy=e=>e&&e.code==="permission-denied"?"Couldn't update the "+KID+"'s screen. (Site owner: publish the latest firestore.rules.)":why(e);
+  async function mirror(){
+    if(!meta.code||meta.viewOnly||!meta.base||!navigator.onLine) return;
+    if(mirBusy){ mirAgain=true; return; }
+    mirBusy=true;
+    try{
+      await fb(); const v=await screenId(meta.code); scr.id=v;
+      const r=screenDoc(v), s=await r.get({source:"server"});
+      if(!s.exists){ setScr(false,""); return; }         // no child's screen in this family — nothing to do
+      const rev=meta.rev||0;
+      if((+s.data().rev||0)>=rev){ setScr(true,""); return; }
+      await ensureKey(v);
+      const st=redact(cl(meta.base));
+      await db.runTransaction(async tx=>{ const x=await tx.get(r);
+        if(!x.exists||(+x.data().rev||0)>=rev) return;     // turned off meanwhile, or another parent's phone already sent this
+        tx.set(r,{state:st,app:A.id,rev,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); });
+      setScr(true,"");
+    }catch(e){ setScr(scr.on,scrWhy(e)); }
+    finally{ mirBusy=false; if(mirAgain){ mirAgain=false; mirrorSoon(300); } }
+  }
+  async function screenOn(){
+    await fb(); const v=await screenId(meta.code); scr.id=v; await ensureKey(v);
+    await screenDoc(v).set({state:redact(cl(meta.base||A.get())),app:A.id,rev:meta.rev||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  async function screenOff(){ await fb(); const v=await screenId(meta.code); await ensureKey(v); await screenDoc(v).delete(); }
+  function setScr(on,e){ scr.on=on; scr.err=e||""; paintScr(); }
+  function paintScr(){
+    const el=scrEl; if(!el||!el.isConnected) return;
+    const B=A.btn;
+    let x='<label class="pbhs-lab">'+h(KIDC)+'\'s screen (view only)</label>'
+      +'<p class="pbhs-note">A live, look-but-don\'t-touch copy of '+h(A.childShows||"the total")+' for your '+h(KID)+'\'s iPhone, iPad, or iPod touch. It updates by itself when a parent taps, but it can\'t add, take away, or change anything — and it never gets your family code or PIN.</p>';
+    if(scr.on===null) x+='<p class="pbhs-note">Checking…</p>';
+    else if(!scr.on) x+='<button class="'+B.primary+' pbhs-full" id="pbhsScrOn">Set up '+h(KID)+'\'s screen</button>';
+    else x+='<div class="row pbhs-row"><button class="'+B.ghost+'" id="pbhsScrCopy">Copy link</button><button class="'+B.primary+'" id="pbhsScrSend">Send '+h(KID)+' link</button></div>'
+      +'<p class="pbhs-note">Open the link on your '+h(KID)+'\'s device in Safari, then tap Share → Add to Home Screen.</p>'
+      +'<button class="'+B.ghost+' pbhs-full" id="pbhsScrOff">Turn off '+h(KID)+'\'s screen</button>';
+    if(scr.err) x+='<div class="pbhs-err" style="margin-top:10px">'+h(scr.err)+'</div>';
+    el.innerHTML=x+'<div style="height:16px"></div>';
+    const link=location.origin+location.pathname+"?view=child&screen="+scr.id;
+    const busy=(b,fn)=>async()=>{ if(scr.busy) return; scr.busy=true; b.disabled=true; b.textContent="Working…";
+      try{ await fn(); }catch(e){ scr.err=scrWhy(e); } finally{ scr.busy=false; paintScr(); } };
+    const on=el.querySelector("#pbhsScrOn"); if(on) on.onclick=busy(on,async()=>{ await screenOn(); setScr(true,""); A.toast(KIDC+"'s screen is on — now send the link"); });
+    const cp=el.querySelector("#pbhsScrCopy"); if(cp) cp.onclick=()=>copy(link,KIDC+" link copied");
+    const sd=el.querySelector("#pbhsScrSend"); if(sd) sd.onclick=()=>share(link,"Your "+A.name+" — live view:",KIDC+" link copied");
+    const off=el.querySelector("#pbhsScrOff"); if(off) off.onclick=()=>{ if(confirm("Turn off the "+KID+"'s screen? It stops updating and shows a \"not switched on\" message. Turning it back on later uses the same link.")) busy(off,async()=>{ await screenOff(); setScr(false,""); A.toast(KIDC+"'s screen turned off"); })(); };
   }
 
   /* ---------- start / join / leave ---------- */
@@ -884,7 +1013,7 @@ const PBHSync=(()=>{
     start(code,L,false,nrev); return {joined:true,replaced:true};
   }
   function leave(){
-    if(unsub){ unsub(); unsub=null; } clearTimeout(pushT); clearTimeout(retryT); ref=null;
+    if(unsub){ unsub(); unsub=null; } clearTimeout(pushT); clearTimeout(retryT); clearTimeout(mirT); ref=null; scr.on=null; scr.err=""; scr.id="";
     meta={}; saveMeta(); status="off"; msg=""; paint(); repaint();
     try{ const q=new URLSearchParams(location.search); if(q.has("family")){ q.delete("family"); const t=q.toString(); history.replaceState(null,"",location.pathname+(t?"?"+t:"")+location.hash); } }catch(e){}
   }
@@ -942,6 +1071,13 @@ const PBHSync=(()=>{
     panelEl=c; c.innerHTML="";
     const add=x=>{ const d=document.createElement("div"); d.innerHTML=x; while(d.firstChild) c.appendChild(d.firstChild); };
     const B=A.btn;
+    if(meta.screen){
+      add('<div class="pbhs-title">'+h(KIDC)+'\'s screen</div><div class="pbhs-status" id="pbhsStatus"></div><div class="pbhs-err" id="pbhsErr" hidden></div>'
+        +'<p class="pbhs-note">This device is a view-only screen. It shows what the parents\' phones have, and can\'t change anything.</p>'
+        +'<button class="'+B.danger+' pbhs-full" id="pbhsLeave">Stop showing it on this device</button>');
+      c.querySelector("#pbhsLeave").onclick=()=>{ if(confirm("Stop showing the live screen on this device?")) leave(); };
+      paint(); return;
+    }
     if(!meta.code){
       if(cfgState==="none"){ cfgState="loading"; loadScript(CFG).catch(()=>{}).then(()=>{ cfgState="done"; repaint(); }); }
       const canStart=cfgState==="done"&&mode()==="open";
@@ -974,36 +1110,47 @@ const PBHSync=(()=>{
       const link=location.origin+location.pathname+"?family="+meta.code;
       const cp=c.querySelector("#pbhsCopy"); if(cp) cp.onclick=()=>copy(pretty(meta.code),"Family code copied");
       const iv=c.querySelector("#pbhsInvite"); if(iv) iv.onclick=()=>share(link,"Join our family's "+A.name+" — open this on your phone:","Invite link copied — send it to the other parent");
-      if(A.extraPanel&&!meta.viewOnly) A.extraPanel(c.querySelector("#pbhsExtra"),meta.code,{copy,share});
+      if(!meta.viewOnly){ scrEl=c.querySelector("#pbhsExtra"); paintScr(); mirror(); }
       c.querySelector("#pbhsLeave").onclick=()=>{ if(confirm("Stop syncing on this phone? It keeps its current copy and works on its own again.")){ leave(); A.toast("Family Sync turned off on this phone"); } };
     }
     paint();
   }
 
-  /* ---------- invite & teen links (?family=CODE) ---------- */
+  /* ---------- invite links (?family=CODE) & child screen links (?view=child&screen=ID) ---------- */
   function fromLink(){
-    let f=null; try{ f=new URLSearchParams(location.search).get("family"); }catch(e){}
+    const f=Q.get("family"), sc=normScreen(Q.get("screen"));
+    if(A.isChild){
+      if(sc.length===64){
+        if(meta.code&&!meta.viewOnly){ A.toast("This is a parent's phone — open the "+KID+" link on their device instead"); return; }
+        if(meta.screen===sc) return;
+        if(unsub){ unsub(); unsub=null; } ref=null;
+        meta={screen:sc,viewOnly:true,rev:0,since:Date.now()}; saveMeta(); setStatus("connecting",""); connect(); return;
+      }
+      if(f&&!joined()){ msg=why(err("old-link")); setStatus("error"); A.toast(msg); }   // v1.0 links carried the family code; no longer honored
+      return;
+    }
     if(!f) return;
     if(meta.code){ if(norm(f)!==meta.code) A.toast("This phone is already in a family"); return; }
-    if(A.isChild){ join(f,{viewOnly:true}).then(()=>A.toast("Connected — live view")).catch(e=>{ msg=why(e); setStatus("error"); A.toast(msg); }); return; }
     invite(f);
   }
 
-  function boot(){
+  async function boot(){
     if(booted) return; booted=true;
+    // v1.0 teen screens joined with the family code itself; move them to the read-only copy and forget the code
+    if(meta.code&&meta.viewOnly){ try{ meta={screen:await screenId(meta.code),viewOnly:true,rev:0,since:meta.since||Date.now()}; saveMeta(); }catch(e){} }
     paint();
-    addEventListener("online",()=>{ if(!meta.code) return; if(!unsub) connect(); else if(meta.dirty) later(500); });
-    addEventListener("offline",()=>{ if(meta.code) setStatus("offline"); });
-    document.addEventListener("visibilitychange",()=>{ if(document.visibilityState!=="visible"||!meta.code) return; if(!unsub) connect(); else if(meta.dirty) later(300); });
+    addEventListener("online",()=>{ if(!joined()) return; if(!unsub) connect(); else if(meta.dirty) later(500); });
+    addEventListener("offline",()=>{ if(joined()) setStatus("offline"); });
+    document.addEventListener("visibilitychange",()=>{ if(document.visibilityState!=="visible"||!joined()) return; if(!unsub) connect(); else if(meta.dirty) later(300); });
     setInterval(()=>{ if(meta.code&&meta.dirty&&!pushing&&navigator.onLine) push(); },20000);
-    if(meta.code) connect();
+    if(joined()) connect();
     fromLink();
   }
   /* called by the app's own save() — the only hook into the app */
   function changed(){ if(!meta.code||meta.viewOnly) return; if(!meta.dirty){ meta.dirty=true; saveMeta(); } later(400); paint(); }
 
   return {boot,changed,panel,leave,
-    get joined(){ return !!meta.code; }, get viewOnly(){ return !!meta.viewOnly; }, get status(){ return status; },
+    get joined(){ return joined(); }, get viewOnly(){ return !!meta.viewOnly; }, get screen(){ return !!meta.screen; }, get status(){ return status; },
     _t:{merge3,patch,deq}};
 })();
 
@@ -1014,7 +1161,8 @@ const PBHSync=(()=>{
   // resume or expire an in-progress session
   if(state.session){
     const r=remainingSec();
-    if(r<=0){ state.sec=0; state.log.unshift({ts:Date.now(),type:"use",name:"Game time used (ran out)",emoji:"🎮",delta:-Math.round(state.session.startSec/60)}); state.session=null; save(); }
+    if(r<=0&&IS_CHILD){ /* child screen: wait for the parents' phone to bank it */ }
+    else if(r<=0){ state.sec=0; state.log.unshift({ts:Date.now(),type:"use",name:"Game time used (ran out)",emoji:"🎮",delta:-Math.round(state.session.startSec/60)}); state.session=null; save(); }
     else { sessionInterval=setInterval(tick,1000); }
   }
   renderAll();
