@@ -1,49 +1,95 @@
 rules_version = '2';
 
 // =====================================================================
-// PBH Family Sync — Firestore security rules
+// PBH Family Sync — Firestore security rules (v1.1)
 // © 2026 Greg Snyder, Ph.D. · Perspective Behavioral Health
 // ---------------------------------------------------------------------
 // Paste this whole file into Firebase console → Firestore Database →
-// Rules → Publish.  Use MODE 1 or MODE 2 (not both), and set
+// Rules → Publish.
+//
+// OPEN vs INVITE-ONLY: change ONE word in inviteOnly() below, and set
 // PBH_SYNC_MODE in pbh-sync-config.js to match.
+//
+// Child's view-only screens also need: Firebase console → Authentication
+// → Sign-in method → Anonymous → Enable. (Only parents' phones sign in,
+// and only when a family turns on a child's screen.)
 //
 // What these rules guarantee:
 //  • A phone can open only the exact family record whose code it holds.
-//  • Nobody can list or browse families (no "list" permission).
-//  • Nothing can be deleted from an app.
+//  • Nobody can list or browse families or screens (no "list" anywhere).
+//  • Nothing can be deleted from an app, except a parent turning off a
+//    child's screen.
 //  • Writes must have exactly the app's own shape — nothing else can be
 //    stored here.
+//  • A child's screen is READ-ONLY for the child. It lives at a separate
+//    address (views/<screen id>) whose id is a one-way hash of the family
+//    code, so holding the child link reveals nothing that can write.
+//    Only a signed-in phone that has proven it knows the family code
+//    (views/<id>/keys/<its uid>, which no phone can ever read back) can
+//    update it — and the copy may not contain a PIN.
 // =====================================================================
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function validCode(c) { return c.matches('^[A-Z0-9]{8,24}$'); }
-    function validApp(a)  { return a in ['points', 'gametime', 'allowance']; }
+    // ---- MODE: false = OPEN (any family can start a code; PBH_SYNC_MODE = "open")
+    //            true  = INVITE-ONLY (only codes you add under allowedFamilies; PBH_SYNC_MODE = "invite")
+    function inviteOnly() { return false; }
+
+    function validCode(c) { return c is string && c.matches('^[A-Z0-9]{8,24}$'); }
+    function validApp(a)  { return a is string && a in ['points', 'gametime', 'allowance']; }
+    function validView(v) { return v.matches('^[a-f0-9]{64}$'); }
+    function invited(c) {
+      return exists(/databases/$(database)/documents/allowedFamilies/$(c));
+    }
+    function familyOk(c)  { return !inviteOnly() || invited(c); }
     function validDoc(a)  {
       return request.resource.data.keys().hasOnly(['state', 'app', 'v', 'rev', 'updatedAt'])
           && request.resource.data.app == a
           && request.resource.data.state is map
           && request.resource.data.rev is number;
     }
-    function invited(c) {
-      return exists(/databases/$(database)/documents/allowedFamilies/$(c));
-    }
 
-    // ===== MODE 1: OPEN — any family can start a code ========================
-    // (matches PBH_SYNC_MODE = "open")
+    // ---- Family records: parents' phones (whoever holds the family code) ----
     match /families/{code}/apps/{app} {
-      allow get:            if validCode(code) && validApp(app);
-      allow create, update: if validCode(code) && validApp(app) && validDoc(app);
+      allow get:            if validCode(code) && validApp(app) && familyOk(code);
+      allow create, update: if validCode(code) && validApp(app) && validDoc(app) && familyOk(code);
     }
 
-    // ===== MODE 2: INVITE-ONLY — only codes you add under allowedFamilies ====
-    // To switch: delete the MODE 1 block above, remove the // from the four
-    // lines below, publish, and set PBH_SYNC_MODE = "invite".
-    // match /families/{code}/apps/{app} {
-    //   allow get:            if validCode(code) && validApp(app) && invited(code);
-    //   allow create, update: if validCode(code) && validApp(app) && validDoc(app) && invited(code);
-    // }
+    // ---- Child's view-only screens ----
+    function keyPath(v) {
+      return /databases/$(database)/documents/views/$(v)/keys/$(request.auth.uid);
+    }
+    function noPin(s) {
+      return !('pin' in s) && !(('config' in s) && (s.config is map) && ('pin' in s.config));
+    }
+    function validScreen(v) {
+      return request.auth != null
+          && request.resource.data.keys().hasOnly(['state', 'app', 'rev', 'updatedAt'])
+          && request.resource.data.state is map
+          && request.resource.data.rev is number
+          && noPin(request.resource.data.state)
+          // the writer must hold a key for THIS screen, and the key says which app it is
+          && request.resource.data.app == get(keyPath(v)).data.app;
+    }
+
+    match /views/{v} {
+      allow get:            if validView(v);                 // the child's device: look only
+      allow create, update: if validView(v) && validScreen(v);
+      allow delete:         if validView(v) && request.auth != null && exists(keyPath(v));
+
+      // A parent phone's one-time proof that it knows the family code.
+      // The screen id must equal SHA-256("pbh-view:" + code + ":" + app).
+      // Never readable, never changeable — so the code can't leak from here.
+      match /keys/{uid} {
+        allow create: if validView(v)
+                      && request.auth != null && request.auth.uid == uid
+                      && request.resource.data.keys().hasOnly(['code', 'app'])
+                      && validCode(request.resource.data.code)
+                      && validApp(request.resource.data.app)
+                      && familyOk(request.resource.data.code)
+                      && hashing.sha256('pbh-view:' + request.resource.data.code + ':' + request.resource.data.app).toHexString().lower() == v;
+      }
+    }
 
     // allowedFamilies has no rules on purpose: phones can't read or write it.
     // You manage it in the Firebase console, which isn't bound by these rules.
