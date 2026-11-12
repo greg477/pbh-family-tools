@@ -12,20 +12,20 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Points" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="theme-color" content="#EEF7F4" />
+<meta name="theme-color" content="#F5F8FC" />
 <title>Points</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Figtree:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root{
-    /* Perspective Behavioral Health palette: navy ink, teal action, mint grounds. Gold stays for the coins. */
-    --sky1:#E2F4ED; --sky2:#F4FAF8; --sky3:#EAF6F2;
-    --ink:#1E2640; --ink-soft:#4A5570; --line:#D5ECE5;
-    --card:#FFFFFF; --panel:#EEF7F4;
-    --teal:#19706C; --teal-deep:#11504D; --teal-mid:#3AA7A3; --mint:#AEE1D2;
+    /* Perspective Behavioral Health palette: navy ink and actions, blue accents, cool blue-grey grounds. Gold stays for the coins. */
+    --sky1:#E4ECF7; --sky2:#F5F8FC; --sky3:#EDF2F9;
+    --ink:#1E2640; --ink-soft:#4A5570; --line:#D9E2EF;
+    --card:#FFFFFF; --panel:#EEF3FA;
+    --action:#1E2640; --action-deep:#0F1426; --accent:#2F5FA8; --accent-soft:#C3D4EE;
     --gold:#FFCB45; --gold-deep:#F2991B; --gold-light:#FFE9A8;
-    --grass:#19706C; --grass-deep:#11504D;
+    --grass:#1E2640; --grass-deep:#0F1426;
     --berry:#FF5C8A; --berry-deep:#E23A6E;
     --glass:rgba(255,255,255,.34); --glassline:rgba(255,255,255,.85);
     --shadow:0 12px 30px rgba(30,38,64,.12);
@@ -65,8 +65,8 @@
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
   /* lid */
   .lid{position:absolute; top:0; left:50%; transform:translateX(-50%); width:132px; height:30px; z-index:4;
-    background:linear-gradient(180deg,#D5ECE5,#AEE1D2); border:3px solid #fff; border-radius:12px;
-    box-shadow:0 4px 0 #86C7B5, var(--shadow-sm); transition:transform .3s;}
+    background:linear-gradient(180deg,#DCE6F5,#B7CAE8); border:3px solid #fff; border-radius:12px;
+    box-shadow:0 4px 0 #8EA8D3, var(--shadow-sm); transition:transform .3s;}
   .lid::after{content:""; position:absolute; top:7px; left:50%; transform:translateX(-50%); width:54px; height:6px; border-radius:6px; background:rgba(255,255,255,.6);}
   .jarwrap.open .lid{transform:translateX(-50%) translateY(-24px) rotate(-10deg);}
   /* glass body */
@@ -95,9 +95,9 @@
     background:radial-gradient(circle at 34% 30%, #FFF4CC, var(--gold-deep)); box-shadow:0 2px 5px rgba(0,0,0,.25), inset 0 0 0 2px rgba(255,255,255,.4);}
 
   /* ===== EARN TOKENS ===== */
-  .section-h{font-family:"Caveat","Figtree",cursive; font-weight:700; font-size:1.7rem; line-height:1; color:var(--teal); margin:14px 2px 10px; display:flex; align-items:center; gap:8px;}
+  .section-h{font-family:"Caveat","Figtree",cursive; font-weight:700; font-size:1.7rem; line-height:1; color:var(--accent); margin:14px 2px 10px; display:flex; align-items:center; gap:8px;}
   .section-h .ic{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:.95rem;}
-  .section-h .ic.e{background:var(--mint);} .section-h .ic.p{background:var(--gold-light);}
+  .section-h .ic.e{background:var(--accent-soft);} .section-h .ic.p{background:var(--gold-light);}
   .tokens{display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:12px; margin-bottom:8px;}
   .token{position:relative; background:var(--card); border:2px solid var(--line); border-radius:22px; padding:14px 6px 12px; cursor:pointer; text-align:center; box-shadow:var(--shadow-sm); transition:transform .12s;}
   .token:active{transform:scale(.92) translateY(2px);}
@@ -116,12 +116,12 @@
   .prize .pname{font-weight:700; font-size:.86rem; line-height:1.15; min-height:2.3em; display:flex; align-items:center; justify-content:center; color:var(--ink);}
   .prize .pcost{font-family:"Figtree"; font-weight:700; font-size:.92rem; margin-top:6px; color:var(--gold-deep); display:inline-flex; align-items:center; gap:4px;}
   .prize .pcost .tk{width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#FFF4CC,var(--gold-deep));display:inline-block;}
-  .prize.ready{border-color:var(--teal-mid); box-shadow:0 0 0 3px rgba(58,167,163,.25), var(--shadow-sm); animation:readybob 2.4s ease-in-out infinite;}
+  .prize.ready{border-color:var(--accent); box-shadow:0 0 0 3px rgba(47,95,168,.22), var(--shadow-sm); animation:readybob 2.4s ease-in-out infinite;}
   @keyframes readybob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
   .prize.ready .ptag{background:var(--grass); color:#fff;}
   .prize.locked .pemoji{filter:grayscale(.85) opacity(.6);}
   .prize .ptag{position:absolute; top:-9px; left:50%; transform:translateX(-50%); font-family:"Figtree"; font-weight:700; font-size:.7rem; padding:2px 10px; border-radius:999px; white-space:nowrap; background:var(--panel); color:var(--ink-soft); border:2px solid #fff; box-shadow:var(--shadow-sm);}
-  .shelf::after{content:""; position:absolute; left:0; right:0; bottom:4px; height:8px; border-radius:6px; background:linear-gradient(180deg,#C5E6DC,#9FCFC1); box-shadow:0 3px 6px rgba(30,38,64,.12);}
+  .shelf::after{content:""; position:absolute; left:0; right:0; bottom:4px; height:8px; border-radius:6px; background:linear-gradient(180deg,#CBD8EC,#A6BCDF); box-shadow:0 3px 6px rgba(30,38,64,.12);}
 
   .empty{color:var(--ink-soft); text-align:center; padding:20px; font-weight:600; width:100%;}
 
@@ -130,7 +130,7 @@
   .scrim.open{display:flex;}
   .sheet{width:100%; max-width:520px; background:var(--sky2); border:none; border-radius:28px 28px 0 0; padding:22px 18px calc(20px + env(safe-area-inset-bottom)); max-height:88dvh; overflow-y:auto; animation:rise .24s ease-out; box-shadow:0 -10px 40px rgba(30,38,64,.2);}
   @keyframes rise{from{transform:translateY(32px); opacity:.5} to{transform:none; opacity:1}}
-  .sheet h2{font-family:"Caveat","Figtree",cursive; margin:2px 0 4px; font-size:2.1rem; line-height:1; font-weight:700; color:var(--teal);}
+  .sheet h2{font-family:"Caveat","Figtree",cursive; margin:2px 0 4px; font-size:2.1rem; line-height:1; font-weight:700; color:var(--accent);}
   .sheet .sub{color:var(--ink-soft); font-size:.92rem; margin:0 0 16px; font-weight:600;}
   .row{display:flex; gap:10px;}
   .btn{border:none; border-radius:16px; padding:15px; font-family:"Figtree"; font-weight:700; font-size:1.05rem; cursor:pointer; flex:1; color:#fff;}
@@ -148,10 +148,10 @@
   .field{margin-bottom:14px;}
   .field label{display:block; font-size:.78rem; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; font-weight:700;}
   input[type=text],input[type=number],input[type=password]{width:100%; background:var(--card); border:2px solid var(--line); color:var(--ink); font-family:inherit; font-weight:600; font-size:1rem; padding:12px 14px; border-radius:13px;}
-  input:focus{outline:none; border-color:var(--teal-mid);}
+  input:focus{outline:none; border-color:var(--accent);}
   .tabbar{display:flex; gap:6px; margin:2px 0 16px; background:var(--card); padding:5px; border-radius:15px; border:2px solid var(--line);}
   .tab{flex:1; text-align:center; padding:9px; border-radius:11px; font-family:"Figtree"; font-weight:700; font-size:.92rem; color:var(--ink-soft); cursor:pointer;}
-  .tab.active{background:var(--teal); color:#fff;}
+  .tab.active{background:var(--action); color:#fff;}
   .editrow{display:flex; gap:8px; align-items:center; background:var(--card); border:2px solid var(--line); border-radius:15px; padding:8px; margin-bottom:8px;}
   .editrow .em{width:44px; height:44px; font-size:1.5rem; text-align:center; padding:0;}
   .editrow .nm{flex:1;}
@@ -160,7 +160,7 @@
   .add{width:100%; background:var(--card); border:2px dashed var(--line); color:var(--ink-soft); padding:13px; border-radius:15px; font-family:"Figtree"; font-weight:700; cursor:pointer; margin-top:2px;}
   .toggle{display:flex; align-items:center; justify-content:space-between; background:var(--card); border:2px solid var(--line); border-radius:15px; padding:14px; margin-bottom:12px;}
   .toggle .tinfo{font-size:.82rem; color:var(--ink-soft); margin-top:3px; max-width:74%; font-weight:600;}
-  .sw{width:54px; height:31px; border-radius:999px; background:#C9D6D2; position:relative; flex:0 0 auto; cursor:pointer; transition:.18s;}
+  .sw{width:54px; height:31px; border-radius:999px; background:#C8D3E3; position:relative; flex:0 0 auto; cursor:pointer; transition:.18s;}
   .sw::after{content:""; position:absolute; top:3px; left:3px; width:25px; height:25px; border-radius:50%; background:#fff; transition:.18s; box-shadow:0 1px 3px rgba(0,0,0,.2);}
   .sw.on{background:var(--grass);} .sw.on::after{left:26px;}
   .lab-h{display:block; font-size:.78rem; letter-spacing:.5px; text-transform:uppercase; color:var(--ink-soft); margin:8px 4px 8px; font-weight:700;}
@@ -231,14 +231,14 @@
 <meta name="author" content="Greg Snyder, Ph.D.">
 <meta name="copyright" content="© 2026 Greg Snyder, Ph.D. — Perspective Behavioral Health. All rights reserved.">
 <style>
-.pbh-credit{display:flex;align-items:center;justify-content:center;gap:11px;margin:18px 4px 2px;padding-top:16px;border-top:1px solid #D5ECE5;}
+.pbh-credit{display:flex;align-items:center;justify-content:center;gap:11px;margin:18px 4px 2px;padding-top:16px;border-top:1px solid #D9E2EF;}
 .pbh-mark{width:30px;height:auto;flex:0 0 auto;}
 .pbh-txt{display:flex;flex-direction:column;line-height:1.3;}
 .pbh-name{font-weight:700;font-size:.84rem;color:#1E2640;letter-spacing:.2px;}
 .pbh-cc{font-size:.72rem;color:#4A5570;}
 </style>
 <style>
-.pbh-about{text-align:center;margin:16px 0 4px;padding:18px 16px;border-radius:16px;background:#FFFFFF;border:1px solid #D5ECE5;}
+.pbh-about{text-align:center;margin:16px 0 4px;padding:18px 16px;border-radius:16px;background:#FFFFFF;border:1px solid #D9E2EF;}
 .pbh-about-mark{width:48px;height:auto;margin-bottom:8px;}
 .pbh-about-name{font-weight:800;font-size:1.02rem;color:#1E2640;letter-spacing:.2px;}
 .pbh-about-by{font-size:.92rem;color:#4A5570;margin-top:3px;}
@@ -246,7 +246,7 @@
 </style>
 <style>
 /* ---- PBH Family Sync (only visible to families who turn it on) ---- */
-.pbhs-pill{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;letter-spacing:.2px;padding:5px 10px;border-radius:999px;background:#FFFFFF;border:1px solid #D5ECE5;color:#4A5570;white-space:nowrap;margin-left:auto;margin-right:8px;}
+.pbhs-pill{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;letter-spacing:.2px;padding:5px 10px;border-radius:999px;background:#FFFFFF;border:1px solid #D9E2EF;color:#4A5570;white-space:nowrap;margin-left:auto;margin-right:8px;}
 .pbhs-pill[hidden],.pbhs-err[hidden]{display:none!important;}
 .pbhs-pill .d,.pbhs-status .d{width:8px;height:8px;border-radius:50%;background:#4A5570;flex:0 0 auto;}
 .pbhs-pill.live .d,.pbhs-status.live .d{background:#3AA7A3;box-shadow:0 0 6px #3AA7A3;}
@@ -255,10 +255,10 @@
 .pbhs-pill.connecting .d,.pbhs-status.connecting .d{background:#F2991B;animation:pbhsPulse 1s infinite;}
 @keyframes pbhsPulse{50%{opacity:.3}}
 .pbhs-title{font-weight:800;font-size:1.08rem;color:#1E2640;margin:2px 2px 8px;display:flex;align-items:center;gap:8px;}
-.pbhs-tag{font-size:.64rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:#FFFFFF;border:1px solid #D5ECE5;color:#4A5570;}
+.pbhs-tag{font-size:.64rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:#FFFFFF;border:1px solid #D9E2EF;color:#4A5570;}
 .pbhs-note{font-size:.84rem;line-height:1.45;color:#4A5570;margin:0 2px 14px;}
 .pbhs-lab{display:block;font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:#4A5570;margin:4px 2px 8px;font-weight:700;}
-.pbhs-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.3rem;font-weight:700;letter-spacing:2px;text-align:center;padding:14px 10px;border-radius:13px;background:#FFFFFF;border:1px dashed #AEE1D2;color:#1E2640;margin:0 0 12px;-webkit-user-select:all;user-select:all;}
+.pbhs-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.3rem;font-weight:700;letter-spacing:2px;text-align:center;padding:14px 10px;border-radius:13px;background:#FFFFFF;border:1px dashed #B7CAE8;color:#1E2640;margin:0 0 12px;-webkit-user-select:all;user-select:all;}
 .pbhs-status{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.95rem;color:#1E2640;margin:0 2px 14px;}
 .pbhs-when{font-weight:500;color:#4A5570;}
 .pbhs-err{background:#FFE4EC;color:#E23A6E;border-radius:12px;padding:10px 12px;font-size:.86rem;font-weight:600;line-height:1.4;margin:0 0 12px;}
@@ -266,12 +266,12 @@
 .pbhs-full{width:100%;display:block;}
 .pbhs-row{margin-bottom:10px;}
 .pbhs-cmp{display:flex;gap:10px;margin:4px 0 16px;}
-.pbhs-cmp>div{flex:1;background:#FFFFFF;border:1px solid #D5ECE5;border-radius:13px;padding:12px;text-align:center;}
+.pbhs-cmp>div{flex:1;background:#FFFFFF;border:1px solid #D9E2EF;border-radius:13px;padding:12px;text-align:center;}
 .pbhs-cmp b{display:block;font-size:.74rem;letter-spacing:.5px;text-transform:uppercase;color:#4A5570;margin-bottom:4px;}
 .pbhs-cmp span{font-weight:700;color:#1E2640;font-size:.92rem;}
-.pbhs-scr{background:#FFFFFF;border:1px solid #D5ECE5;border-radius:14px;padding:12px;margin:0 0 10px;}
+.pbhs-scr{background:#FFFFFF;border:1px solid #D9E2EF;border-radius:14px;padding:12px;margin:0 0 10px;}
 .pbhs-scrname{font-weight:800;color:#1E2640;margin:0 2px 10px;}
-  .childbanner{background:var(--panel);border:1px solid var(--mint);color:var(--ink);font-weight:700;font-size:.85rem;text-align:center;padding:8px 10px;border-radius:12px;margin:0 0 10px;}
+  .childbanner{background:var(--panel);border:1px solid var(--accent-soft);color:var(--ink);font-weight:700;font-size:.85rem;text-align:center;padding:8px 10px;border-radius:12px;margin:0 0 10px;}
   .prize.view{cursor:default;}
 </style>
 </head>
@@ -394,12 +394,13 @@ const store = (() => {
 /* ---------- children: colours, avatars, starting lists ---------- */
 // Each child has a colour that tints their jar and chip, so a parent can see at a glance who they're tapping for.
 const THEMES={
+  blue: {light:"#D6E4F7", mid:"#5B8AD6", deep:"#2F5FA8", label:"Blue"},
+  navy: {light:"#D9DEEC", mid:"#5A6890", deep:"#1E2640", label:"Navy"},
   teal: {light:"#CDEDE4", mid:"#3AA7A3", deep:"#19706C", label:"Teal"},
   gold: {light:"#FFE9A8", mid:"#FFCB45", deep:"#F2991B", label:"Gold"},
   berry:{light:"#FFD3E0", mid:"#FF7FA3", deep:"#E23A6E", label:"Berry"},
   sky:  {light:"#D2ECFF", mid:"#6CC4FF", deep:"#2E8FD8", label:"Sky"},
   mint: {light:"#CDF5DD", mid:"#4FD68A", deep:"#23A35C", label:"Mint"},
-  navy: {light:"#D9DEEC", mid:"#5A6890", deep:"#1E2640", label:"Navy"},
   grape:{light:"#E8D9FB", mid:"#B488F0", deep:"#7E4CC9", label:"Grape"},
   coral:{light:"#FFDCCB", mid:"#FF9466", deep:"#E0602F", label:"Coral"},
 };
@@ -426,7 +427,7 @@ const V1_BEHAVIORS=[
 const clone=x=>JSON.parse(JSON.stringify(x));
 const isObj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 // The first child is always "c1" — the same id on every phone, so two parents' phones that upgrade separately still line up.
-function newChild(o){ return Object.assign({id:"c1", name:"My Points", avatar:"★", color:"teal", points:0, responseCost:false, behaviors:clone(DEFAULT_BEHAVIORS), prizes:clone(DEFAULT_PRIZES), log:[]}, o||{}); }
+function newChild(o){ return Object.assign({id:"c1", name:"My Points", avatar:"★", color:"blue", points:0, responseCost:false, behaviors:clone(DEFAULT_BEHAVIORS), prizes:clone(DEFAULT_PRIZES), log:[]}, o||{}); }
 const DEFAULT={ pin:"", children:[newChild()] };
 
 /* Any saved copy → the current shape. v1 (one child, fields at the top) becomes child "c1", untouched.
@@ -445,7 +446,7 @@ function normalize(s){
     const k=Object.assign(newChild(),c);
     k.points=Math.max(0,Math.round(Number(k.points)||0));
     k.responseCost=!!k.responseCost;
-    if(!THEMES[k.color]) k.color="teal";
+    if(!THEMES[k.color]) k.color="blue";
     if(typeof k.avatar!=="string"||!k.avatar) k.avatar="★";
     if(typeof k.name!=="string") k.name="";
     ["behaviors","prizes","log"].forEach(f=>{ if(!Array.isArray(k[f])) k[f]=[]; });
@@ -470,8 +471,8 @@ const CUR_KEY=KEY+":child";
 let curId=(()=>{ try{ return localStorage.getItem(CUR_KEY)||""; }catch(e){ return ""; } })();
 function kid(){ return state.children.find(c=>c.id===curId)||state.children[0]; }
 function setKid(id){ curId=id; try{ localStorage.setItem(CUR_KEY,id); }catch(e){} }
-function themeVars(c){ const t=THEMES[c.color]||THEMES.teal; return `--kid-light:${t.light};--kid-mid:${t.mid};--kid-deep:${t.deep};`; }
-function applyTheme(){ const t=THEMES[kid().color]||THEMES.teal, r=document.documentElement.style;
+function themeVars(c){ const t=THEMES[c.color]||THEMES.blue; return `--kid-light:${t.light};--kid-mid:${t.mid};--kid-deep:${t.deep};`; }
+function applyTheme(){ const t=THEMES[kid().color]||THEMES.blue, r=document.documentElement.style;
   r.setProperty("--kid-light",t.light); r.setProperty("--kid-mid",t.mid); r.setProperty("--kid-deep",t.deep); }
 function switchKid(id){
   if(id===kid().id) return;
@@ -713,7 +714,7 @@ function buildSetup(){
   c.appendChild(lookPicker(K,()=>{ save(); renderMeter(); renderKids(); buildEditing("setup"); }));
 
   const adj=document.createElement("div"); adj.className="field";
-  adj.innerHTML=`<label>Adjust points now (has ${K.points})</label><div class="row"><input type="number" id="adjIn" placeholder="e.g. 5 or -5" inputmode="numeric"/><button class="btn gold" id="adjBtn" style="flex:0 0 96px">Apply</button></div>`;
+  adj.innerHTML=`<label>Adjust points now (has ${K.points})</label><div class="row"><input type="number" id="adjIn" placeholder="e.g. 5 or -5" inputmode="numeric"/><button class="btn primary" id="adjBtn" style="flex:0 0 96px">Apply</button></div>`;
   c.appendChild(adj);
   adj.querySelector("#adjBtn").onclick=()=>{ const v=parseInt(adj.querySelector("#adjIn").value,10); if(!v)return;
     K.points=Math.max(0,K.points+v); logTo(K,{ts:Date.now(),type:v>0?"earn":"spend",name:"Manual adjust",emoji:"✏️",delta:v});
@@ -808,7 +809,7 @@ function buildKids(){
 }
 function addChildForm(c,addBtn){
   const used=new Set(state.children.map(k=>k.color)), usedA=new Set(state.children.map(k=>k.avatar));
-  const color=Object.keys(THEMES).find(k=>!used.has(k))||"teal", avatar=AVATARS.slice(1).find(a=>!usedA.has(a))||"🦊";
+  const color=Object.keys(THEMES).find(k=>!used.has(k))||"blue", avatar=AVATARS.slice(1).find(a=>!usedA.has(a))||"🦊";
   const src=kid();
   const f=document.createElement("div"); f.className="addform";
   f.innerHTML=`<div class="field"><label>Name</label><input type="text" id="newKidName" placeholder="e.g. Sam" maxlength="24"/></div>

@@ -21,8 +21,8 @@
   :root{
     --bg:#121829; --bg2:#182038; --panel:#1F2843; --panel-hi:#2A3556;
     --line:rgba(255,255,255,.08);
-    --cyan:#62CDBF; --cyan-deep:#19706C;
-    --lime:#9EE2B8; --lime-deep:#1F6E4F;
+    --cyan:#7DB4F5; --cyan-deep:#2F5FA8;
+    --lime:#9CD8A6; --lime-deep:#1F6E4F;
     --red:#F43F5E; --red-deep:#9F1239;
     --amber:#FBBF24;
     --text:#EEF6F3; --muted:#9FB0C8;
@@ -56,10 +56,10 @@
   .hero{position:relative; border-radius:24px; padding:26px 22px 22px; margin-bottom:16px;
     background:linear-gradient(180deg,var(--panel-hi),var(--panel)); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden;}
   .hero::before{content:""; position:absolute; inset:-50% 25% auto; height:220px;
-    background:radial-gradient(closest-side, rgba(98,205,191,.22), transparent 70%); pointer-events:none;}
+    background:radial-gradient(closest-side, rgba(125,180,245,.22), transparent 70%); pointer-events:none;}
   .hero .cap{font-size:.72rem; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); font-weight:600;}
   .bank{font-family:"Chakra Petch"; font-weight:700; font-size:3.9rem; line-height:1; margin:6px 0 4px; color:var(--cyan);
-    text-shadow:0 0 24px rgba(98,205,191,.35); font-variant-numeric:tabular-nums;}
+    text-shadow:0 0 24px rgba(125,180,245,.35); font-variant-numeric:tabular-nums;}
   .bank.bump{animation:bump .4s cubic-bezier(.2,1.4,.4,1);}
   @keyframes bump{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
   .bank.live{color:#fff;}
@@ -72,7 +72,7 @@
     font-family:"Chakra Petch"; font-weight:700; font-size:1.15rem; letter-spacing:.5px;
     display:flex; align-items:center; justify-content:center; gap:10px;}
   .playbtn:active{transform:scale(.98);}
-  .playbtn.go{background:linear-gradient(180deg,var(--cyan),var(--cyan-deep)); color:#082826;}
+  .playbtn.go{background:linear-gradient(180deg,var(--cyan),var(--cyan-deep)); color:#0B1A33;}
   .playbtn.stop{background:linear-gradient(180deg,var(--red),var(--red-deep)); color:#fff;}
   .livedot{width:11px; height:11px; border-radius:50%; background:#fff; animation:pulse 1s infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
@@ -121,12 +121,12 @@
     border-radius:24px 24px 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom)); max-height:90dvh; overflow-y:auto;
     animation:rise .2s ease-out;}
   @keyframes rise{from{transform:translateY(28px);opacity:.6}to{transform:none;opacity:1}}
-  .sheet h2{margin:2px 0 4px; font-family:"Caveat","Figtree",cursive; font-size:2rem; line-height:1; color:#AEE1D2;}
+  .sheet h2{margin:2px 0 4px; font-family:"Caveat","Figtree",cursive; font-size:2rem; line-height:1; color:#B7CAE8;}
   .sheet .sub{color:var(--muted); font-size:.9rem; margin:0 0 16px;}
   .row{display:flex; gap:10px;}
   .btn{border:none; border-radius:13px; padding:14px; font-family:"Figtree"; font-weight:700; font-size:1rem; cursor:pointer; flex:1;}
   .btn:active{transform:scale(.97);}
-  .btn.cyan{background:var(--cyan); color:#082826;}
+  .btn.cyan{background:var(--cyan); color:#0B1A33;}
   .btn.red{background:var(--red); color:#fff;}
   .btn.lime{background:var(--lime); color:#0E2E22;}
   .btn.ghost{background:var(--panel); color:var(--text); border:1px solid var(--line);}
@@ -192,7 +192,7 @@
 .pbhs-pill{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;letter-spacing:.2px;padding:5px 10px;border-radius:999px;background:#1F2843;border:1px solid rgba(255,255,255,.08);color:#9FB0C8;white-space:nowrap;margin-left:auto;margin-right:8px;}
 .pbhs-pill[hidden],.pbhs-err[hidden]{display:none!important;}
 .pbhs-pill .d,.pbhs-status .d{width:8px;height:8px;border-radius:50%;background:#9FB0C8;flex:0 0 auto;}
-.pbhs-pill.live .d,.pbhs-status.live .d{background:#9EE2B8;box-shadow:0 0 6px #9EE2B8;}
+.pbhs-pill.live .d,.pbhs-status.live .d{background:#9CD8A6;box-shadow:0 0 6px #9CD8A6;}
 .pbhs-pill.offline .d,.pbhs-status.offline .d{background:#FBBF24;}
 .pbhs-pill.error .d,.pbhs-status.error .d{background:#F43F5E;}
 .pbhs-pill.connecting .d,.pbhs-status.connecting .d{background:#FBBF24;animation:pbhsPulse 1s infinite;}
@@ -212,7 +212,7 @@
 .pbhs-cmp>div{flex:1;background:#1F2843;border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:12px;text-align:center;}
 .pbhs-cmp b{display:block;font-size:.74rem;letter-spacing:.5px;text-transform:uppercase;color:#9FB0C8;margin-bottom:4px;}
 .pbhs-cmp span{font-weight:700;color:#EEF6F3;font-size:.92rem;}
-.childbanner{background:rgba(98,205,191,.12);border:1px solid rgba(98,205,191,.35);color:var(--cyan);font-weight:700;font-size:.84rem;text-align:center;padding:8px 10px;border-radius:12px;margin:0 0 12px;}
+.childbanner{background:rgba(125,180,245,.12);border:1px solid rgba(125,180,245,.35);color:var(--cyan);font-weight:700;font-size:.84rem;text-align:center;padding:8px 10px;border-radius:12px;margin:0 0 12px;}
 </style>
 </head>
 <body>
