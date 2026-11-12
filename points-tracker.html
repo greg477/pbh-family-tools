@@ -46,7 +46,7 @@
 
   /* header */
   .topbar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;}
-  .kidname{font-family:"Figtree"; font-weight:700; font-size:1.25rem; color:var(--ink); display:flex; align-items:center; gap:8px; overflow:hidden;}
+  .kidname{font-family:"Caveat","Figtree",cursive; font-weight:700; font-size:2rem; line-height:1; color:var(--accent); display:flex; align-items:center; gap:8px; overflow:hidden;}
   .kidname .star{color:var(--gold-deep); filter:drop-shadow(0 1px 0 rgba(0,0,0,.08));}
   .kidname span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .gear{background:var(--card); border:2px solid var(--line); color:var(--ink-soft); width:46px; height:46px; border-radius:16px; font-size:1.25rem; flex:0 0 auto; display:grid; place-items:center; cursor:pointer; box-shadow:var(--shadow-sm);}
@@ -87,7 +87,7 @@
   .sparkle{position:absolute; z-index:4; font-size:1.1rem; pointer-events:none; animation:spk 1.3s ease-out forwards;}
   @keyframes spk{0%{opacity:0;transform:scale(.4) rotate(0)}30%{opacity:1}100%{opacity:0;transform:scale(1.2) translateY(-18px) rotate(25deg)}}
 
-  .goalcap{font-family:"Figtree"; font-weight:700; font-size:1.05rem; color:var(--ink); text-align:center; margin-top:4px; min-height:1.5em;}
+  .goalcap{font-family:"Caveat","Figtree",cursive; font-weight:700; font-size:1.65rem; line-height:1.15; color:var(--accent); text-align:center; margin-top:4px; min-height:1.2em; text-wrap:balance;}
   .goalcap .em{font-size:1.2rem;}
   .goalcap.ready{color:var(--grass-deep);}
 
@@ -142,7 +142,7 @@
 
   .confirm-emoji{font-size:3.4rem; text-align:center; margin:4px 0 6px; animation:pop .4s cubic-bezier(.2,1.5,.4,1);}
   @keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
-  .confirm-line{font-family:"Figtree"; text-align:center; font-size:1.3rem; font-weight:700; margin-bottom:4px;}
+  .confirm-line{font-family:"Caveat","Figtree",cursive; text-align:center; font-size:2.1rem; line-height:1.1; font-weight:700; color:var(--accent); margin-bottom:6px; text-wrap:balance;}
   .confirm-cost{text-align:center; color:var(--gold-deep); font-weight:700; margin-bottom:18px;}
 
   .field{margin-bottom:14px;}
@@ -188,6 +188,8 @@
   .kidrow-top[hidden],.setkids[hidden]{display:none;}
   .kidchip{flex:0 0 auto; display:inline-flex; align-items:center; gap:7px; padding:6px 13px 6px 6px; border-radius:999px; background:var(--card); border:2px solid var(--line); color:var(--ink); font-family:"Figtree"; font-weight:700; font-size:.98rem; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s, background .2s, border-color .2s;}
   .kidchip:active{transform:scale(.95);}
+  .kidchip .kn{font-family:"Caveat","Figtree",cursive; font-size:1.45rem; line-height:1;}
+  .kidchip.sm .kn{font-size:1.3rem;}
   .kidchip .kav{width:30px; height:30px; border-radius:50%; display:grid; place-items:center; font-size:1.05rem; background:var(--kid-light); box-shadow:inset 0 0 0 2px var(--kid-mid);}
   .kidchip .kp{font-size:.85rem; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
   .kidchip.on{background:var(--kid-light); border-color:var(--kid-deep); box-shadow:0 3px 0 var(--kid-deep);}
@@ -200,7 +202,7 @@
   .kidrow{display:flex; align-items:center; gap:10px; background:var(--card); border:2px solid var(--line); border-left:6px solid var(--kid-mid); border-radius:15px; padding:10px; margin-bottom:8px;}
   .kidrow .kav{width:40px; height:40px; flex:0 0 auto; border-radius:50%; display:grid; place-items:center; font-size:1.35rem; background:var(--kid-light);}
   .kidrow .kr-t{flex:1; min-width:0;}
-  .kidrow .kr-n{font-family:"Figtree"; font-weight:700; font-size:1.05rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .kidrow .kr-n{font-family:"Caveat","Figtree",cursive; font-weight:700; font-size:1.6rem; line-height:1.05; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .kidrow .kr-s{font-size:.78rem; color:var(--ink-soft); font-weight:600;}
   .kidrow .kr-e{flex:0 0 auto; padding:9px 14px; font-size:.92rem;}
   .kidrow .del{background:transparent; border:none; color:var(--berry); font-size:1.5rem; cursor:pointer; width:30px;}
@@ -216,7 +218,7 @@
   .hint{font-size:.84rem; line-height:1.4; color:var(--ink-soft); font-weight:600; margin:-2px 4px 10px;}
   .ask{position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(24px); width:min(92%,440px); background:var(--ink); color:#fff; padding:12px 12px 12px 16px; border-radius:18px; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.22s; z-index:121;}
   .ask.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0);}
-  .ask .asktx{font-family:"Figtree"; font-weight:700; font-size:1rem; margin-bottom:8px;}
+  .ask .asktx{font-family:"Caveat","Figtree",cursive; font-weight:700; font-size:1.6rem; line-height:1.1; margin-bottom:8px;}
   .ask .askbtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
   .askbtn{display:inline-flex; align-items:center; gap:6px; border:none; border-radius:999px; padding:6px 14px 6px 6px; background:var(--kid-light); color:var(--ink); font-family:"Figtree"; font-weight:700; font-size:.95rem; cursor:pointer; box-shadow:0 3px 0 var(--kid-deep);}
   .askbtn .aav{width:26px; height:26px; border-radius:50%; background:#fff; display:grid; place-items:center; font-size:.9rem;}
