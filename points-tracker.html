@@ -172,6 +172,55 @@
   .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:13px 20px; border-radius:16px; font-family:"Baloo 2"; font-weight:700; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.22s; z-index:120; text-align:center; max-width:88%;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
+
+  /* ===== children (siblings) ===== */
+  .fill{background:linear-gradient(180deg,var(--kid-light,var(--gold-light)) 0%, var(--kid-mid,var(--gold)) 34%, var(--kid-deep,var(--gold-deep)) 100%);}
+  .fill::before{background:radial-gradient(circle at 10px -2px, transparent 9px, var(--kid-light,var(--gold-light)) 10px) repeat-x; background-size:22px 20px;}
+  .kidname .star,.av-star{color:var(--kid-deep,var(--gold-deep));}
+  #nameAv{display:inline-flex;}
+  .total .cstar{color:var(--kid-deep,var(--gold-deep)); filter:drop-shadow(0 2px 0 var(--kid-deep,var(--gold-deep)));}
+  .scene.swap{animation:swapin .32s ease-out;}
+  @keyframes swapin{from{opacity:.25; transform:translateY(6px) scale(.98)}to{opacity:1; transform:none}}
+  .kidrow-top{display:flex; gap:8px; overflow-x:auto; padding:6px 2px 6px; margin:2px -2px 0; scrollbar-width:none;}
+  .kidrow-top::-webkit-scrollbar{display:none;}
+  .kidrow-top[hidden],.setkids[hidden]{display:none;}
+  .kidchip{flex:0 0 auto; display:inline-flex; align-items:center; gap:7px; padding:6px 13px 6px 6px; border-radius:999px; background:var(--card); border:2px solid var(--line); color:var(--ink); font-family:"Baloo 2"; font-weight:700; font-size:.98rem; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s, background .2s, border-color .2s;}
+  .kidchip:active{transform:scale(.95);}
+  .kidchip .kav{width:30px; height:30px; border-radius:50%; display:grid; place-items:center; font-size:1.05rem; background:var(--kid-light); box-shadow:inset 0 0 0 2px var(--kid-mid);}
+  .kidchip .kp{font-size:.85rem; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
+  .kidchip.on{background:var(--kid-light); border-color:var(--kid-deep); box-shadow:0 3px 0 var(--kid-deep);}
+  .kidchip.on .kp{color:var(--ink);}
+  .kidchip.on .kav{background:#fff;}
+  .kidchip.sm{padding:4px 11px 4px 4px; font-size:.9rem; box-shadow:none;}
+  .kidchip.sm .kav{width:26px; height:26px; font-size:.95rem;}
+  .setkids{display:flex; align-items:center; gap:7px; overflow-x:auto; margin:-6px 0 14px; padding:2px; scrollbar-width:none;}
+  .setkids .edlab{font-size:.72rem; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-soft); font-weight:800; margin-right:2px;}
+  .kidrow{display:flex; align-items:center; gap:10px; background:var(--card); border:2px solid var(--line); border-left:6px solid var(--kid-mid); border-radius:15px; padding:10px; margin-bottom:8px;}
+  .kidrow .kav{width:40px; height:40px; flex:0 0 auto; border-radius:50%; display:grid; place-items:center; font-size:1.35rem; background:var(--kid-light);}
+  .kidrow .kr-t{flex:1; min-width:0;}
+  .kidrow .kr-n{font-family:"Baloo 2"; font-weight:700; font-size:1.05rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .kidrow .kr-s{font-size:.78rem; color:var(--ink-soft); font-weight:600;}
+  .kidrow .kr-e{flex:0 0 auto; padding:9px 14px; font-size:.92rem;}
+  .kidrow .del{background:transparent; border:none; color:var(--berry); font-size:1.5rem; cursor:pointer; width:30px;}
+  .addform{background:var(--panel); border:2px dashed var(--line); border-radius:15px; padding:12px;}
+  .startopt{width:100%; margin-bottom:8px; text-align:left; padding:11px 14px; font-size:.98rem;}
+  .startopt span{display:block; font-family:"Nunito"; font-weight:600; font-size:.8rem; color:var(--ink-soft); margin-top:1px;}
+  .avpick{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
+  .avopt{width:40px; height:40px; border-radius:12px; border:2px solid var(--line); background:var(--card); font-size:1.25rem; cursor:pointer; display:grid; place-items:center; padding:0;}
+  .avopt.on{border-color:var(--kid-deep,var(--gold-deep)); background:var(--kid-light,var(--gold-light));}
+  .swpick{display:flex; gap:10px;}
+  .swopt{width:34px; height:34px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 2px var(--line); cursor:pointer; padding:0;}
+  .swopt.on{box-shadow:0 0 0 3px var(--ink);}
+  .hint{font-size:.84rem; line-height:1.4; color:var(--ink-soft); font-weight:600; margin:-2px 4px 10px;}
+  .ask{position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(24px); width:min(92%,440px); background:var(--ink); color:#fff; padding:12px 12px 12px 16px; border-radius:18px; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.22s; z-index:121;}
+  .ask.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0);}
+  .ask .asktx{font-family:"Baloo 2"; font-weight:700; font-size:1rem; margin-bottom:8px;}
+  .ask .askbtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .askbtn{display:inline-flex; align-items:center; gap:6px; border:none; border-radius:999px; padding:6px 14px 6px 6px; background:var(--kid-light); color:var(--ink); font-family:"Baloo 2"; font-weight:700; font-size:.95rem; cursor:pointer; box-shadow:0 3px 0 var(--kid-deep);}
+  .askbtn .aav{width:26px; height:26px; border-radius:50%; background:#fff; display:grid; place-items:center; font-size:.9rem;}
+  .askbtn.done{box-shadow:none; opacity:.85; padding-left:14px;}
+  .askx{margin-left:auto; background:transparent; border:none; color:#fff; opacity:.7; font-size:1.4rem; cursor:pointer; width:34px; height:34px;}
+  .tab{padding:9px 2px;}
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:.001ms !important; animation-iteration-count:1 !important;}
     .fill{transition:height .2s linear;}
@@ -218,6 +267,8 @@
 .pbhs-cmp>div{flex:1;background:#FFFFFF;border:1px solid #F0DFC4;border-radius:13px;padding:12px;text-align:center;}
 .pbhs-cmp b{display:block;font-size:.74rem;letter-spacing:.5px;text-transform:uppercase;color:#9177A6;margin-bottom:4px;}
 .pbhs-cmp span{font-weight:700;color:#4B2E63;font-size:.92rem;}
+.pbhs-scr{background:#FFFFFF;border:1px solid #F0DFC4;border-radius:14px;padding:12px;margin:0 0 10px;}
+.pbhs-scrname{font-weight:800;color:#4B2E63;margin:0 2px 10px;}
   .childbanner{background:var(--gold-light);border:1px solid var(--gold);color:var(--ink);font-weight:700;font-size:.85rem;text-align:center;padding:8px 10px;border-radius:12px;margin:0 0 10px;}
   .prize.view{cursor:default;}
 </style>
@@ -225,13 +276,15 @@
 <body>
 <div class="app">
   <div class="topbar">
-    <div class="kidname"><span class="star">★</span><span id="nameLabel">My Points</span></div>
+    <div class="kidname"><span id="nameAv"><span class="star av-star">★</span></span><span id="nameLabel">My Points</span></div>
     <span class="pbhs-pill" id="pbhsPill" hidden></span><button class="gear" id="gearBtn" aria-label="Parent settings">⚙️</button>
   </div>
 
+  <div class="kidrow-top" id="kidRow" hidden></div>
+
   <div id="childBanner" class="childbanner" style="display:none">Look-only screen — your grown-ups add the points.</div>
 
-  <div class="scene">
+  <div class="scene" id="scene">
     <div class="ptscap">Points</div>
     <div class="total baloo" id="totalEl"><span class="cstar">★</span><span id="totalNum">0</span></div>
     <div class="jarwrap" id="jarwrap">
@@ -241,7 +294,7 @@
         <div class="shine"></div>
       </div>
     </div>
-    <div class="goalcap" id="goalCap">Tap a star job to earn!</div>
+    <div class="goalcap" id="goalCap">Catch them doing it — tap to earn!</div>
   </div>
 
   <div class="section-h" id="earnHead"><span class="ic e">⭐</span>Earn points</div>
@@ -276,16 +329,19 @@
 <div class="scrim" id="setScrim">
   <div class="sheet" id="setSheet">
     <h2>Parent settings</h2>
-    <p class="sub" id="setSub">Set up jobs, prizes, and points.</p>
+    <p class="sub" id="setSub">Set up behaviors, prizes, and points.</p>
+    <div class="setkids" id="setKids" hidden></div>
     <div class="tabbar">
       <div class="tab active" data-tab="setup">Setup</div>
       <div class="tab" data-tab="prizes">Prizes</div>
       <div class="tab" data-tab="log">Log</div>
+      <div class="tab" data-tab="kids">Kids</div>
       <div class="tab" data-tab="sync">Sync</div>
     </div>
     <div id="tab-setup"></div>
     <div id="tab-prizes" style="display:none"></div>
     <div id="tab-log" style="display:none"></div>
+    <div id="tab-kids" style="display:none"></div>
     <div id="tab-sync" style="display:none"></div>
 <div class="pbh-about">
       <img src="data:image/png;base64,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" alt="Perspective Behavioral Health" class="pbh-about-mark">
@@ -313,6 +369,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="ask" id="ask" role="status"></div>
 
 <script>
 /* ---------- storage adapter ---------- */
@@ -332,26 +389,66 @@ const store = (() => {
   } catch(e){ let mem=null; return { async get(){return mem;}, async set(v){mem=v;} }; }
 })();
 
-/* ---------- default state ---------- */
-const DEFAULT = {
-  name: "My Points", points: 0, pin: "", responseCost: false,
-  behaviors: [
-    {id:"b1", emoji:"🦷", name:"Brushed teeth", val:1},
-    {id:"b2", emoji:"📚", name:"Reading time", val:1},
-    {id:"b3", emoji:"🧹", name:"Tidied up", val:1},
-    {id:"b4", emoji:"🥦", name:"Ate dinner", val:1},
-    {id:"b5", emoji:"👂", name:"First-time listening", val:1},
-    {id:"b6", emoji:"🛏️", name:"Bedtime, no fuss", val:1},
-  ],
-  prizes: [
-    {id:"p1", emoji:"🎮", name:"20 min video game", cost:8},
-    {id:"p2", emoji:"📺", name:"Pick a show", cost:6},
-    {id:"p3", emoji:"🍦", name:"Ice cream", cost:10},
-    {id:"p4", emoji:"🏞️", name:"Trip to the park", cost:12},
-    {id:"p5", emoji:"🕹️", name:"Stay up 15 min late", cost:15},
-  ],
-  log: []
+/* ---------- children: colours, avatars, starting lists ---------- */
+// Each child has a colour that tints their jar and chip, so a parent can see at a glance who they're tapping for.
+const THEMES={
+  gold: {light:"#FFE9A8", mid:"#FFCB45", deep:"#F2991B", label:"Gold"},
+  berry:{light:"#FFD3E0", mid:"#FF7FA3", deep:"#E23A6E", label:"Berry"},
+  sky:  {light:"#D2ECFF", mid:"#6CC4FF", deep:"#2E8FD8", label:"Sky"},
+  mint: {light:"#CDF5DD", mid:"#4FD68A", deep:"#23A35C", label:"Mint"},
+  grape:{light:"#E8D9FB", mid:"#B488F0", deep:"#7E4CC9", label:"Grape"},
+  coral:{light:"#FFDCCB", mid:"#FF9466", deep:"#E0602F", label:"Coral"},
 };
+const AVATARS=["★","🦊","🐼","🐸","🦄","🐯","🐙","🐻","🐰","🦖","🐝","🦉","🐬"];
+// Starting targets: a few clearly named behaviors, one point each (see the parent guide: "two or three behaviors").
+const DEFAULT_BEHAVIORS=[
+  {id:"b1", emoji:"👂", name:"Listened the first time", val:1},
+  {id:"b2", emoji:"🙆", name:"Took “no” calmly", val:1},
+  {id:"b3", emoji:"🤝", name:"Gentle hands, kind words", val:1},
+];
+const DEFAULT_PRIZES=[
+  {id:"p1", emoji:"🎮", name:"20 min video game", cost:8},
+  {id:"p2", emoji:"📺", name:"Pick a show", cost:6},
+  {id:"p3", emoji:"🍦", name:"Ice cream", cost:10},
+  {id:"p4", emoji:"🏞️", name:"Trip to the park", cost:12},
+  {id:"p5", emoji:"🕹️", name:"Stay up 15 min late", cost:15},
+];
+// The starting list before v2 — a phone still showing it untouched counts as "fresh" when joining a family.
+const V1_BEHAVIORS=[
+  {id:"b1", emoji:"🦷", name:"Brushed teeth", val:1},{id:"b2", emoji:"📚", name:"Reading time", val:1},
+  {id:"b3", emoji:"🧹", name:"Tidied up", val:1},{id:"b4", emoji:"🥦", name:"Ate dinner", val:1},
+  {id:"b5", emoji:"👂", name:"First-time listening", val:1},{id:"b6", emoji:"🛏️", name:"Bedtime, no fuss", val:1},
+];
+const clone=x=>JSON.parse(JSON.stringify(x));
+const isObj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
+// The first child is always "c1" — the same id on every phone, so two parents' phones that upgrade separately still line up.
+function newChild(o){ return Object.assign({id:"c1", name:"My Points", avatar:"★", color:"gold", points:0, responseCost:false, behaviors:clone(DEFAULT_BEHAVIORS), prizes:clone(DEFAULT_PRIZES), log:[]}, o||{}); }
+const DEFAULT={ pin:"", children:[newChild()] };
+
+/* Any saved copy → the current shape. v1 (one child, fields at the top) becomes child "c1", untouched.
+   Deterministic on purpose: Family Sync runs it on every copy it receives. */
+function normalize(s){
+  s=isObj(s)?clone(s):{};
+  if(!Array.isArray(s.children)){
+    const v1=Array.isArray(s.behaviors)||Array.isArray(s.prizes)||("points" in s);
+    s={pin:s.pin, children:[v1?newChild({
+      name:typeof s.name==="string"?s.name:"My Points", points:s.points, responseCost:!!s.responseCost,
+      behaviors:Array.isArray(s.behaviors)?s.behaviors:clone(V1_BEHAVIORS),
+      prizes:Array.isArray(s.prizes)?s.prizes:clone(DEFAULT_PRIZES), log:Array.isArray(s.log)?s.log:[]
+    }):newChild()]};
+  }
+  const kids=s.children.filter(c=>isObj(c)&&typeof c.id==="string"&&c.id).map(c=>{
+    const k=Object.assign(newChild(),c);
+    k.points=Math.max(0,Math.round(Number(k.points)||0));
+    k.responseCost=!!k.responseCost;
+    if(!THEMES[k.color]) k.color="gold";
+    if(typeof k.avatar!=="string"||!k.avatar) k.avatar="★";
+    if(typeof k.name!=="string") k.name="";
+    ["behaviors","prizes","log"].forEach(f=>{ if(!Array.isArray(k[f])) k[f]=[]; });
+    return k;
+  });
+  return { pin:typeof s.pin==="string"?s.pin:"", children:kids.length?kids:[newChild()] };
+}
 
 let state=null, saveTimer=null;
 function save(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ store.set(state); PBHSync.changed(); }, 120); }
@@ -359,8 +456,25 @@ const $ = s => document.querySelector(s);
 const uid = () => "x"+Math.random().toString(36).slice(2,8);
 const reduced = ()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function fmtTime(ts){ const d=new Date(ts), n=new Date(); const same=d.toDateString()===n.toDateString(); const t=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}); return same?t:d.toLocaleDateString([],{month:"short",day:"numeric"})+" "+t; }
-let toastTimer=null; function toast(msg){ const el=$("#toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove("show"),2000); }
+let toastTimer=null; function toast(msg){ hideAsk(); const el=$("#toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove("show"),2000); }
 function escapeHtml(s){ return (s||"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function avatarHtml(c,cls){ return c.avatar==="★"?`<span class="${cls||""} av-star">★</span>`:`<span class="${cls||""}">${escapeHtml(c.avatar)}</span>`; }
+const kidName=c=>c.name||"Child";
+
+/* ---------- which child is on screen (this phone only — never synced) ---------- */
+const CUR_KEY=KEY+":child";
+let curId=(()=>{ try{ return localStorage.getItem(CUR_KEY)||""; }catch(e){ return ""; } })();
+function kid(){ return state.children.find(c=>c.id===curId)||state.children[0]; }
+function setKid(id){ curId=id; try{ localStorage.setItem(CUR_KEY,id); }catch(e){} }
+function themeVars(c){ const t=THEMES[c.color]||THEMES.gold; return `--kid-light:${t.light};--kid-mid:${t.mid};--kid-deep:${t.deep};`; }
+function applyTheme(){ const t=THEMES[kid().color]||THEMES.gold, r=document.documentElement.style;
+  r.setProperty("--kid-light",t.light); r.setProperty("--kid-mid",t.mid); r.setProperty("--kid-deep",t.deep); }
+function switchKid(id){
+  if(id===kid().id) return;
+  setKid(id); hideAsk();
+  const sc=$("#scene"); sc.classList.remove("swap"); void sc.offsetWidth; if(!reduced()) sc.classList.add("swap");
+  renderAll();
+}
 
 /* ---------- animated number ---------- */
 let displayPoints=0, rafId=null;
@@ -378,21 +492,21 @@ function animateTotal(to){
 /* ---------- jar fill + goal ---------- */
 const GEMCOLORS=["#FF6B8A","#4ADE80","#5BBCFF","#C084FC"];
 function nextGoal(){
-  const un = state.prizes.filter(p=>p.cost>state.points).sort((a,b)=>a.cost-b.cost);
+  const K=kid();
+  const un = K.prizes.filter(p=>p.cost>K.points).sort((a,b)=>a.cost-b.cost);
   return un.length? un[0] : null;
 }
 function updateJar(animated){
-  const goal=nextGoal();
+  const K=kid(), goal=nextGoal();
   const fillEl=$("#fill");
   let frac;
-  if(goal){ frac = goal.cost>0 ? state.points/goal.cost : 1; }
-  else { frac = state.points>0 ? 1 : 0; }
+  if(goal){ frac = goal.cost>0 ? K.points/goal.cost : 1; }
+  else { frac = K.points>0 ? 1 : 0; }
   frac=Math.max(0,Math.min(1,frac));
   fillEl.style.height=(frac*100)+"%";
-  // caption
   const gc=$("#goalCap");
-  if(!state.prizes.length){ gc.textContent="⭐ Keep earning stars!"; gc.classList.remove("ready"); }
-  else if(goal){ const need=goal.cost-state.points; gc.innerHTML=`${need} more for <span class="em">${goal.emoji||"🎁"}</span> ${escapeHtml(goal.name)}!`; gc.classList.remove("ready"); }
+  if(!K.prizes.length){ gc.textContent="⭐ Keep earning stars!"; gc.classList.remove("ready"); }
+  else if(goal){ const need=goal.cost-K.points; gc.innerHTML=`${need} more for <span class="em">${goal.emoji||"🎁"}</span> ${escapeHtml(goal.name)}!`; gc.classList.remove("ready"); }
   else { gc.innerHTML="🎉 You can trade for anything!"; gc.classList.add("ready"); }
   seedFillTreasure(frac);
 }
@@ -428,41 +542,79 @@ function dropCoinToJar(fromEl){
   ],{duration:620,easing:"cubic-bezier(.4,.1,.5,1)"}).onfinish=()=>{ coin.remove(); splash(); };
 }
 function splash(){
-  const n=1+Math.floor(Math.random()*2); const g=$("#glass").getBoundingClientRect();
+  const n=1+Math.floor(Math.random()*2);
   for(let i=0;i<n;i++){ const s=document.createElement("div"); s.className="sparkle"; s.textContent=Math.random()<.5?"✨":"⭐";
     s.style.left=(40+Math.random()*90)+"px"; s.style.top=(30+Math.random()*40)+"px"; $("#jarwrap").appendChild(s); setTimeout(()=>s.remove(),1300); }
 }
 function spendFx(){ const jw=$("#jarwrap"); jw.classList.add("open","spendshake"); setTimeout(()=>jw.classList.remove("open","spendshake"),500); }
 
 /* ---------- core actions ---------- */
+function logTo(K,entry){ K.log.unshift(entry); K.log=K.log.slice(0,200); }
 function earn(b, srcEl){
   if(IS_CHILD) return;
-  state.points += b.val;
-  state.log.unshift({ts:Date.now(),type:"earn",name:b.name,emoji:b.emoji,delta:b.val});
-  state.log=state.log.slice(0,200);
+  const K=kid();
+  K.points=Math.max(0,K.points+b.val);
+  logTo(K,{ts:Date.now(),type:"earn",name:b.name,emoji:b.emoji,delta:b.val});
   if(b.val>=0) dropCoinToJar(srcEl);
-  animateTotal(state.points);
+  animateTotal(K.points);
   setTimeout(()=>updateJar(true), b.val>=0 && !reduced()?560:0);
-  renderPrizes();
+  renderPrizes(); renderKids();
   save();
+  offerSiblings(K,b);
+}
+/* "Did both kids do it?" — after a tap, offer the same behavior to any sibling whose list has it (by name).
+   Each sibling earns their own value for it. Nothing happens unless the parent taps. */
+const sameName=(a,b)=>String(a||"").trim().toLowerCase()===String(b||"").trim().toLowerCase();
+let askTimer=null;
+function hideAsk(){ clearTimeout(askTimer); const a=$("#ask"); if(a) a.classList.remove("show"); }
+function offerSiblings(K,b){
+  if(b.val<=0||state.children.length<2) return;
+  const sibs=state.children.filter(c=>c.id!==K.id).map(c=>({c,beh:c.behaviors.find(x=>sameName(x.name,b.name)&&x.val>0)})).filter(x=>x.beh).slice(0,3);
+  if(!sibs.length) return;
+  clearTimeout(toastTimer); $("#toast").classList.remove("show");
+  const a=$("#ask");
+  a.innerHTML=`<div class="asktx">${escapeHtml(b.emoji||"⭐")} Did ${sibs.length===1?escapeHtml(kidName(sibs[0].c)):"a sibling"} do it too?</div><div class="askbtns"></div>`;
+  const row=a.querySelector(".askbtns");
+  sibs.forEach(({c,beh})=>{ const btn=document.createElement("button"); btn.className="askbtn"; btn.style.cssText=themeVars(c);
+    btn.innerHTML=`${avatarHtml(c,"aav")}<span>+${beh.val} ${escapeHtml(kidName(c))}</span>`;
+    btn.onclick=()=>{ c.points+=beh.val; logTo(c,{ts:Date.now(),type:"earn",name:beh.name,emoji:beh.emoji,delta:beh.val});
+      save(); renderKids(); btn.disabled=true; btn.classList.add("done"); btn.innerHTML=`<span>✓ ${escapeHtml(kidName(c))}</span>`;
+      if([...row.children].every(x=>x.disabled)){ clearTimeout(askTimer); askTimer=setTimeout(hideAsk,700); } };
+    row.appendChild(btn); });
+  const x=document.createElement("button"); x.className="askx"; x.setAttribute("aria-label","No"); x.textContent="×"; x.onclick=hideAsk; row.appendChild(x);
+  a.classList.add("show");
+  clearTimeout(askTimer); askTimer=setTimeout(hideAsk,6000);
 }
 function spend(p){
   if(IS_CHILD) return false;
-  if(state.points<p.cost){ toast("Not enough yet — "+(p.cost-state.points)+" more to go"); return false; }
-  state.points-=p.cost;
-  state.log.unshift({ts:Date.now(),type:"spend",name:p.name,emoji:p.emoji,delta:-p.cost});
-  state.log=state.log.slice(0,200);
-  spendFx(); animateTotal(state.points); updateJar(true); save();
-  renderPrizes();
+  const K=kid();
+  if(K.points<p.cost){ toast("Not enough yet — "+(p.cost-K.points)+" more to go"); return false; }
+  K.points-=p.cost;
+  logTo(K,{ts:Date.now(),type:"spend",name:p.name,emoji:p.emoji,delta:-p.cost});
+  spendFx(); animateTotal(K.points); updateJar(true); save();
+  renderPrizes(); renderKids();
   return true;
 }
 
 /* ---------- render ---------- */
-function renderMeter(){ $("#nameLabel").textContent=state.name||"My Points"; displayPoints=state.points; $("#totalNum").textContent=state.points; updateJar(false); }
+function renderMeter(){ const K=kid(); applyTheme(); $("#nameAv").innerHTML=avatarHtml(K,"star"); $("#nameLabel").textContent=K.name||"My Points"; cancelAnimationFrame(rafId); displayPoints=K.points; $("#totalNum").textContent=K.points; updateJar(false); }
+function renderKids(){
+  const row=$("#kidRow");
+  if(IS_CHILD||state.children.length<2){ row.hidden=true; return; }
+  row.hidden=false; row.innerHTML="";
+  const cur=kid();
+  state.children.forEach(c=>{
+    const b=document.createElement("button"); b.className="kidchip"+(c.id===cur.id?" on":""); b.style.cssText=themeVars(c);
+    b.setAttribute("aria-pressed",c.id===cur.id?"true":"false");
+    b.innerHTML=`${avatarHtml(c,"kav")}<span class="kn">${escapeHtml(kidName(c))}</span><span class="kp">★ ${c.points}</span>`;
+    b.onclick=()=>switchKid(c.id);
+    row.appendChild(b);
+  });
+}
 function renderEarn(){
-  const g=$("#earnGrid"); g.innerHTML="";
-  if(!state.behaviors.length){ g.innerHTML='<div class="empty">No jobs yet. Add some in ⚙️ settings.</div>'; return; }
-  state.behaviors.forEach(b=>{
+  const g=$("#earnGrid"); g.innerHTML=""; const K=kid();
+  if(!K.behaviors.length){ g.innerHTML='<div class="empty">Nothing to earn yet. Add behaviors in ⚙️ settings.</div>'; return; }
+  K.behaviors.forEach(b=>{
     const el=document.createElement("button"); el.className="token";
     const sign=b.val<0?"":"+";
     el.innerHTML=`<span class="val ${b.val<0?'neg':''}">${sign}${b.val}</span><span class="emoji">${b.emoji||"⭐"}</span><span class="name">${escapeHtml(b.name)}</span>`;
@@ -471,33 +623,41 @@ function renderEarn(){
   });
 }
 function renderPrizes(){
-  const list=$("#prizeList"); list.innerHTML="";
-  if(!state.prizes.length){ list.innerHTML='<div class="empty">No prizes yet. Add some in ⚙️ settings.</div>'; return; }
-  state.prizes.forEach(p=>{
-    const ready=state.points>=p.cost;
+  const list=$("#prizeList"); list.innerHTML=""; const K=kid();
+  if(!K.prizes.length){ list.innerHTML='<div class="empty">No prizes yet. Add some in ⚙️ settings.</div>'; return; }
+  K.prizes.forEach(p=>{
+    const ready=K.points>=p.cost;
     const el=document.createElement("button"); el.className="prize "+(ready?"ready":"locked");
-    const tag = ready?'<span class="ptag">Ready!</span>':`<span class="ptag">${p.cost-state.points} more</span>`;
+    const tag = ready?'<span class="ptag">Ready!</span>':`<span class="ptag">${p.cost-K.points} more</span>`;
     el.innerHTML=`${tag}<span class="pemoji">${p.emoji||"🎁"}</span><span class="pname">${escapeHtml(p.name)}</span><span class="pcost"><span class="tk"></span>${p.cost}</span>`;
     if(IS_CHILD){ el.classList.add("view"); el.tabIndex=-1; } else el.onclick=()=>openConfirm(p);
     list.appendChild(el);
   });
 }
-function renderAll(){ renderMeter(); renderEarn(); renderPrizes(); childChrome(); }
+function renderAll(){ renderKids(); renderMeter(); renderEarn(); renderPrizes(); childChrome(); }
 function childChrome(){
   if(!IS_CHILD) return;
   $("#gearBtn").style.display="none"; $("#earnHead").style.display="none"; $("#earnGrid").style.display="none";
   $("#childBanner").style.display="block";
 }
+/* swipe the jar left/right to change child */
+(()=>{ let x0=null,y0=null; const sc=$("#scene");
+  sc.addEventListener("touchstart",e=>{ const t=e.touches[0]; x0=t.clientX; y0=t.clientY; },{passive:true});
+  sc.addEventListener("touchend",e=>{ if(x0===null||IS_CHILD||state.children.length<2) return; const t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0; x0=null;
+    if(Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.5) return;
+    const i=state.children.indexOf(kid()), n=state.children.length; switchKid(state.children[(i+(dx<0?1:n-1))%n].id); },{passive:true});
+})();
 
 /* ---------- confirm ---------- */
 let pendingPrize=null;
 function openConfirm(p){
   if(IS_CHILD) return;
-  if(state.points<p.cost){ toast("Not enough yet — "+(p.cost-state.points)+" more to go"); return; }
+  const K=kid();
+  if(K.points<p.cost){ toast("Not enough yet — "+(p.cost-K.points)+" more to go"); return; }
   pendingPrize=p;
   $("#cEmoji").textContent=p.emoji||"🎁";
   $("#cLine").textContent="Trade for "+p.name+"?";
-  $("#cCost").textContent="Costs "+p.cost+" points  ·  you have "+state.points;
+  $("#cCost").textContent="Costs "+p.cost+" points  ·  "+(state.children.length>1?kidName(K)+" has ":"you have ")+K.points;
   $("#confirmScrim").classList.add("open");
 }
 $("#cCancel").onclick=()=>{ $("#confirmScrim").classList.remove("open"); pendingPrize=null; };
@@ -511,84 +671,181 @@ $("#pinOk").onclick=()=>{ if($("#pinInput").value===state.pin){ $("#pinScrim").c
 $("#pinCancel").onclick=()=>{ $("#pinScrim").classList.remove("open"); pinResolver&&pinResolver(false); pinResolver=null; };
 
 /* ---------- settings ---------- */
-$("#gearBtn").onclick=async()=>{ if(IS_CHILD) return; const ok=await requirePin(); if(!ok) return; buildSettings("setup"); $("#setScrim").classList.add("open"); };
+let curTab="setup";
+$("#gearBtn").onclick=async()=>{ if(IS_CHILD) return; const ok=await requirePin(); if(!ok) return; showTab("setup"); $("#setScrim").classList.add("open"); };
 $("#setClose").onclick=()=>{ $("#setScrim").classList.remove("open"); renderAll(); };
-document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>{ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); t.classList.add("active"); ["setup","prizes","log","sync"].forEach(name=>{ $("#tab-"+name).style.display=(name===t.dataset.tab)?"block":"none"; }); buildSettings(t.dataset.tab); }; });
-function buildSettings(which){ if(which==="setup") buildSetup(); else if(which==="prizes") buildPrizes(); else if(which==="sync") PBHSync.panel($("#tab-sync")); else buildLog(); }
+document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>showTab(t.dataset.tab); });
+function showTab(name){
+  curTab=name;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
+  ["setup","prizes","log","kids","sync"].forEach(n=>{ $("#tab-"+n).style.display=(n===name)?"block":"none"; });
+  buildSettings(name);
+}
+const PER_CHILD={setup:1,prizes:1,log:1};
+function buildSettings(which){
+  buildEditing(which);
+  if(which==="setup") buildSetup(); else if(which==="prizes") buildPrizes(); else if(which==="kids") buildKids(); else if(which==="sync") PBHSync.panel($("#tab-sync")); else buildLog();
+}
+/* "Editing: [Maya] [Sam]" — which child the Setup / Prizes / Log tabs are changing */
+function buildEditing(which){
+  const e=$("#setKids"), many=state.children.length>1;
+  $("#setSub").textContent=many&&PER_CHILD[which]?"Each child has their own behaviors and prizes.":"Set up behaviors, prizes, and points.";
+  if(!many||!PER_CHILD[which]){ e.hidden=true; return; }
+  e.hidden=false; e.innerHTML='<span class="edlab">Editing</span>';
+  const cur=kid();
+  state.children.forEach(c=>{ const b=document.createElement("button"); b.className="kidchip sm"+(c.id===cur.id?" on":""); b.style.cssText=themeVars(c);
+    b.innerHTML=`${avatarHtml(c,"kav")}<span class="kn">${escapeHtml(kidName(c))}</span>`;
+    b.onclick=()=>{ setKid(c.id); renderAll(); buildSettings(curTab); };
+    e.appendChild(b); });
+}
 
 function buildSetup(){
-  const c=$("#tab-setup"); c.innerHTML="";
+  const c=$("#tab-setup"); c.innerHTML=""; const K=kid();
   const nameF=document.createElement("div"); nameF.className="field";
-  nameF.innerHTML=`<label>Child's name</label><input type="text" id="nameIn" value="${escapeHtml(state.name)}" placeholder="My Points"/>`;
+  nameF.innerHTML=`<label>Child's name</label><input type="text" id="nameIn" value="${escapeHtml(K.name)}" placeholder="My Points"/>`;
   c.appendChild(nameF);
-  nameF.querySelector("#nameIn").oninput=e=>{ state.name=e.target.value; save(); $("#nameLabel").textContent=state.name||"My Points"; };
+  nameF.querySelector("#nameIn").oninput=e=>{ K.name=e.target.value; save(); renderMeter(); renderKids(); };
+
+  c.appendChild(lookPicker(K,()=>{ save(); renderMeter(); renderKids(); buildEditing("setup"); }));
 
   const adj=document.createElement("div"); adj.className="field";
-  adj.innerHTML=`<label>Adjust points now (have ${state.points})</label><div class="row"><input type="number" id="adjIn" placeholder="e.g. 5 or -5" inputmode="numeric"/><button class="btn gold" id="adjBtn" style="flex:0 0 96px">Apply</button></div>`;
+  adj.innerHTML=`<label>Adjust points now (has ${K.points})</label><div class="row"><input type="number" id="adjIn" placeholder="e.g. 5 or -5" inputmode="numeric"/><button class="btn gold" id="adjBtn" style="flex:0 0 96px">Apply</button></div>`;
   c.appendChild(adj);
   adj.querySelector("#adjBtn").onclick=()=>{ const v=parseInt(adj.querySelector("#adjIn").value,10); if(!v)return;
-    state.points=Math.max(0,state.points+v); state.log.unshift({ts:Date.now(),type:v>0?"earn":"spend",name:"Manual adjust",emoji:"✏️",delta:v});
-    save(); animateTotal(state.points); updateJar(true); adj.querySelector("#adjIn").value=""; buildSetup(); renderPrizes(); };
+    K.points=Math.max(0,K.points+v); logTo(K,{ts:Date.now(),type:v>0?"earn":"spend",name:"Manual adjust",emoji:"✏️",delta:v});
+    save(); animateTotal(K.points); updateJar(true); adj.querySelector("#adjIn").value=""; buildSetup(); renderPrizes(); renderKids(); };
 
   const tg=document.createElement("div"); tg.className="toggle";
-  tg.innerHTML=`<div><div style="font-weight:700">Allow point loss (response cost)</div><div class="tinfo">Off by default. When on, you can add jobs with negative values that subtract points. Deductions can backfire for some kids — use deliberately.</div></div><div class="sw ${state.responseCost?'on':''}" id="rcSw"></div>`;
+  tg.innerHTML=`<div><div style="font-weight:700">Allow point loss (response cost)</div><div class="tinfo">Off by default${state.children.length>1?", and set for each child separately":""}. When on, you can give behaviors negative values that subtract points. Deductions can backfire for some kids — use deliberately.</div></div><div class="sw ${K.responseCost?'on':''}" id="rcSw"></div>`;
   c.appendChild(tg);
-  tg.querySelector("#rcSw").onclick=e=>{ state.responseCost=!state.responseCost; e.target.classList.toggle("on",state.responseCost); save(); };
+  tg.querySelector("#rcSw").onclick=e=>{ K.responseCost=!K.responseCost;
+    if(!K.responseCost) K.behaviors.forEach(b=>{ if(b.val<0) b.val=0; });
+    e.target.classList.toggle("on",K.responseCost); save(); buildSetup(); };
 
-  const lab=document.createElement("label"); lab.className="lab-h"; lab.textContent="Jobs (earn points)"; c.appendChild(lab);
-  state.behaviors.forEach((b,i)=>c.appendChild(editRow("b",b,i)));
-  const addB=document.createElement("button"); addB.className="add"; addB.textContent="+ Add a job";
-  addB.onclick=()=>{ state.behaviors.push({id:uid(),emoji:"⭐",name:"New job",val:1}); save(); buildSetup(); };
+  const lab=document.createElement("label"); lab.className="lab-h"; lab.textContent="Behaviors that earn points"; c.appendChild(lab);
+  const hint=document.createElement("p"); hint.className="hint"; hint.textContent="Name what you want to see, in words your child knows. Say it out loud as you tap: “You listened the first time!”"; c.appendChild(hint);
+  K.behaviors.forEach((b,i)=>c.appendChild(editRow("b",b,i,K)));
+  const addB=document.createElement("button"); addB.className="add"; addB.textContent="+ Add a behavior";
+  addB.onclick=()=>{ K.behaviors.push({id:uid(),emoji:"⭐",name:"New behavior",val:1}); save(); buildSetup(); };
   c.appendChild(addB);
-
-  const pinF=document.createElement("div"); pinF.className="field"; pinF.style.marginTop="18px";
-  pinF.innerHTML=`<label>Parent PIN (blank = no lock)</label><input type="text" id="pinSet" inputmode="numeric" value="${escapeHtml(state.pin)}" placeholder="e.g. 1234"/>`;
-  c.appendChild(pinF);
-  pinF.querySelector("#pinSet").oninput=e=>{ state.pin=e.target.value.trim(); save(); };
+}
+/* avatar + colour for a child */
+function lookPicker(K,onChange){
+  const w=document.createElement("div"); w.className="field";
+  w.innerHTML=`<label>Look</label><div class="avpick"></div><div class="swpick"></div>`;
+  const ap=w.querySelector(".avpick"), sp=w.querySelector(".swpick");
+  AVATARS.forEach(a=>{ const b=document.createElement("button"); b.className="avopt"+(K.avatar===a?" on":""); b.innerHTML=a==="★"?'<span class="av-star">★</span>':a; b.setAttribute("aria-label","Avatar "+a);
+    b.onclick=()=>{ K.avatar=a; ap.querySelectorAll(".avopt").forEach(x=>x.classList.toggle("on",x===b)); onChange(); }; ap.appendChild(b); });
+  Object.keys(THEMES).forEach(k=>{ const b=document.createElement("button"); b.className="swopt"+(K.color===k?" on":""); b.style.background=THEMES[k].mid; b.setAttribute("aria-label",THEMES[k].label);
+    b.onclick=()=>{ K.color=k; sp.querySelectorAll(".swopt").forEach(x=>x.classList.toggle("on",x===b)); onChange(); }; sp.appendChild(b); });
+  return w;
 }
 function buildPrizes(){
-  const c=$("#tab-prizes"); c.innerHTML="";
-  state.prizes.forEach((p,i)=>c.appendChild(editRow("p",p,i)));
+  const c=$("#tab-prizes"); c.innerHTML=""; const K=kid();
+  K.prizes.forEach((p,i)=>c.appendChild(editRow("p",p,i,K)));
   const add=document.createElement("button"); add.className="add"; add.textContent="+ Add a prize";
-  add.onclick=()=>{ state.prizes.push({id:uid(),emoji:"🎁",name:"New prize",cost:5}); save(); buildPrizes(); };
+  add.onclick=()=>{ K.prizes.push({id:uid(),emoji:"🎁",name:"New prize",cost:5}); save(); buildPrizes(); };
   c.appendChild(add);
 }
-function editRow(kind,item,i){
+function editRow(kind,item,i,K){
   const row=document.createElement("div"); row.className="editrow";
   const valField=kind==="b"?"val":"cost";
   row.innerHTML=`<input class="em" type="text" value="${escapeHtml(item.emoji)}" maxlength="2" aria-label="Emoji"/><input class="nm" type="text" value="${escapeHtml(item.name)}" aria-label="Name"/><input class="vl" type="number" value="${item[valField]}" inputmode="numeric" aria-label="Points"/><button class="del" aria-label="Delete">×</button>`;
   const [em,nm,vl]=row.querySelectorAll("input");
   em.oninput=e=>{item.emoji=e.target.value;save();};
   nm.oninput=e=>{item.name=e.target.value;save();};
-  vl.oninput=e=>{let n=parseInt(e.target.value,10);if(isNaN(n))n=0;if(kind==="p")n=Math.max(0,n);item[valField]=n;save();};
-  row.querySelector(".del").onclick=()=>{ const arr=kind==="b"?state.behaviors:state.prizes; arr.splice(i,1); save(); kind==="b"?buildSetup():buildPrizes(); };
+  vl.oninput=e=>{let n=parseInt(e.target.value,10);if(isNaN(n))n=0;if(kind==="p"||!K.responseCost)n=Math.max(0,n);item[valField]=n;save();};
+  row.querySelector(".del").onclick=()=>{ const arr=kind==="b"?K.behaviors:K.prizes; arr.splice(i,1); save(); kind==="b"?buildSetup():buildPrizes(); };
   return row;
 }
 function buildLog(){
-  const c=$("#tab-log"); c.innerHTML="";
-  if(!state.log.length){ c.innerHTML='<div class="empty">Nothing logged yet.</div>'; }
-  else state.log.slice(0,60).forEach(e=>{ const r=document.createElement("div"); r.className="logrow";
+  const c=$("#tab-log"); c.innerHTML=""; const K=kid();
+  if(!K.log.length){ c.innerHTML='<div class="empty">Nothing logged yet.</div>'; }
+  else K.log.slice(0,60).forEach(e=>{ const r=document.createElement("div"); r.className="logrow";
     r.innerHTML=`<div><div>${e.emoji||""} ${escapeHtml(e.name)}</div><div class="when">${fmtTime(e.ts)}</div></div><div class="d ${e.delta>0?'plus':'minus'}">${e.delta>0?'+':'−'}${Math.abs(e.delta)}</div>`;
     c.appendChild(r); });
   const wrap=document.createElement("div"); wrap.className="row"; wrap.style.marginTop="14px";
+  const who=state.children.length>1?kidName(K)+"'s ":"";
   const clr=document.createElement("button"); clr.className="btn ghost"; clr.textContent="Clear log";
-  clr.onclick=()=>{ if(confirm("Clear the activity log? Points stay the same.")){ state.log=[]; save(); buildLog(); } };
+  clr.onclick=()=>{ if(confirm("Clear "+(who||"the ")+"activity log? Points stay the same.")){ K.log=[]; save(); buildLog(); } };
   const rst=document.createElement("button"); rst.className="btn warn"; rst.textContent="Reset points to 0";
-  rst.onclick=()=>{ if(confirm("Set points back to 0?")){ state.points=0; state.log.unshift({ts:Date.now(),type:"spend",name:"Reset to 0",emoji:"🔄",delta:0}); save(); animateTotal(0); updateJar(true); renderPrizes(); } };
+  rst.onclick=()=>{ if(confirm("Set "+(who||"")+"points back to 0?")){ K.points=0; logTo(K,{ts:Date.now(),type:"spend",name:"Reset to 0",emoji:"🔄",delta:0}); save(); animateTotal(0); updateJar(true); renderPrizes(); renderKids(); } };
   wrap.appendChild(clr); wrap.appendChild(rst); c.appendChild(wrap);
+}
+
+/* ---------- Kids tab: who's on the system, adding a sibling, the PIN ---------- */
+function buildKids(){
+  const c=$("#tab-kids"); c.innerHTML="";
+  const lab=document.createElement("label"); lab.className="lab-h"; lab.textContent="Children"; c.appendChild(lab);
+  state.children.forEach(K=>{
+    const r=document.createElement("div"); r.className="kidrow"; r.style.cssText=themeVars(K);
+    r.innerHTML=`${avatarHtml(K,"kav")}<div class="kr-t"><div class="kr-n">${escapeHtml(kidName(K))}</div><div class="kr-s">★ ${K.points} · ${K.behaviors.length} behaviors · ${K.prizes.length} prizes</div></div><button class="btn ghost kr-e">Edit</button>${state.children.length>1?'<button class="del" aria-label="Remove">×</button>':''}`;
+    r.querySelector(".kr-e").onclick=()=>{ setKid(K.id); renderAll(); showTab("setup"); };
+    const d=r.querySelector(".del");
+    if(d) d.onclick=()=>{ if(!confirm("Remove "+kidName(K)+" and their points, behaviors, prizes, and log? This can't be undone.")) return;
+      const sub=K.id==="c1"?"":K.id;
+      state.children=state.children.filter(x=>x!==K); if(curId===K.id) setKid(state.children[0].id);
+      save(); renderAll(); buildKids(); PBHSync.dropScreen(sub); toast(kidName(K)+" removed"); };
+    c.appendChild(r);
+  });
+  if(state.children.length<6){
+    const add=document.createElement("button"); add.className="add"; add.textContent="+ Add a brother or sister";
+    add.onclick=()=>addChildForm(c,add);
+    c.appendChild(add);
+  }
+  const hint=document.createElement("p"); hint.className="hint"; hint.style.marginTop="12px";
+  hint.textContent="Each child earns on their own list, at their own level. Different targets are fine — kids accept differences better when you say why: “Everyone's working on their own thing.”";
+  c.appendChild(hint);
+
+  const pinF=document.createElement("div"); pinF.className="field"; pinF.style.marginTop="18px";
+  pinF.innerHTML=`<label>Parent PIN (blank = no lock)</label><input type="text" id="pinSet" inputmode="numeric" value="${escapeHtml(state.pin)}" placeholder="e.g. 1234"/>`;
+  c.appendChild(pinF);
+  pinF.querySelector("#pinSet").oninput=e=>{ state.pin=e.target.value.trim(); save(); };
+}
+function addChildForm(c,addBtn){
+  const used=new Set(state.children.map(k=>k.color)), usedA=new Set(state.children.map(k=>k.avatar));
+  const color=Object.keys(THEMES).find(k=>!used.has(k))||"gold", avatar=AVATARS.slice(1).find(a=>!usedA.has(a))||"🦊";
+  const src=kid();
+  const f=document.createElement("div"); f.className="addform";
+  f.innerHTML=`<div class="field"><label>Name</label><input type="text" id="newKidName" placeholder="e.g. Sam" maxlength="24"/></div>
+    <label class="lab-h" style="margin-top:0">Start with</label>
+    <button class="btn ghost startopt" data-s="copy">Copy ${escapeHtml(kidName(src))}'s behaviors &amp; prizes<span>Then change what's different</span></button>
+    <button class="btn ghost startopt" data-s="default">The starter list<span>${DEFAULT_BEHAVIORS.map(b=>escapeHtml(b.name)).join(" · ")}</span></button>
+    <button class="btn ghost startopt" data-s="blank">Blank<span>Add their own from scratch</span></button>
+    <button class="btn ghost" id="addCancel" style="width:100%;margin-top:4px">Cancel</button>`;
+  addBtn.replaceWith(f);
+  setTimeout(()=>f.querySelector("#newKidName").focus(),50);
+  f.querySelector("#addCancel").onclick=()=>buildKids();
+  f.querySelectorAll(".startopt").forEach(b=>b.onclick=()=>{
+    const name=f.querySelector("#newKidName").value.trim();
+    if(!name){ toast("Add a name first"); f.querySelector("#newKidName").focus(); return; }
+    const s=b.dataset.s;
+    const K=newChild({id:uid(), name, avatar, color,
+      behaviors:s==="copy"?clone(src.behaviors):s==="default"?clone(DEFAULT_BEHAVIORS):[],
+      prizes:s==="copy"?clone(src.prizes):s==="default"?clone(DEFAULT_PRIZES):[],
+      responseCost:s==="copy"?src.responseCost:false});
+    state.children.push(K); setKid(K.id); save(); renderAll(); showTab("setup"); toast(name+" added — set up their list");
+  });
 }
 $("#setScrim").onclick=e=>{ if(e.target===$("#setScrim")){ $("#setScrim").classList.remove("open"); renderAll(); } };
 
 /* ---------- PBH Family Sync: settings for this app ---------- */
+const childSub=c=>c.id==="c1"?"":c.id;   // child "c1" keeps the screen link families already have
 const SYNC_APP={
-  id:"points", name:"Points & Prize Jar", unit:"point total", localKey:KEY,
-  counters:["points"],
+  id:"points", name:"Points & Prize Jar", unit:"point jar", localKey:KEY,
+  counters:["children[].points"],
   get:()=>state, writeLocal:s=>store.set(s),
-  normalize:s=>Object.assign(JSON.parse(JSON.stringify(DEFAULT)),s||{}),
-  isFresh:s=>!s.points&&!(s.log||[]).length&&JSON.stringify([s.name,s.pin,s.behaviors,s.prizes,!!s.responseCost])===JSON.stringify([DEFAULT.name,DEFAULT.pin,DEFAULT.behaviors,DEFAULT.prizes,!!DEFAULT.responseCost]),
-  summary:s=>"★ "+(s.points||0)+" points · "+(s.log||[]).length+" logged",
-  clamp:m=>{ m.points=Math.max(0,Math.round(Number(m.points)||0)); },
-  afterRemote:()=>{ const was=displayPoints; renderAll(); if(state.points!==was){ displayPoints=was; animateTotal(state.points); } },
+  normalize:s=>normalize(s),
+  isFresh:s=>{ if(s.pin||s.children.length!==1) return false; const c=s.children[0], d=newChild();
+    return !c.points&&!c.log.length&&!c.responseCost&&c.name===d.name&&JSON.stringify(c.prizes)===JSON.stringify(d.prizes)
+      &&(JSON.stringify(c.behaviors)===JSON.stringify(d.behaviors)||JSON.stringify(c.behaviors)===JSON.stringify(V1_BEHAVIORS)); },
+  summary:s=>s.children.map(c=>kidName(c)+" ★ "+c.points).join(" · ")+" · "+s.children.reduce((n,c)=>n+c.log.length,0)+" logged",
+  clamp:m=>{ (m.children||[]).forEach(c=>{ c.points=Math.max(0,Math.round(Number(c.points)||0)); }); },
+  afterRemote:()=>{ const was=displayPoints, id=kid().id; renderAll(); if(kid().id===id&&kid().points!==was){ displayPoints=was; animateTotal(kid().points); }
+    if($("#setScrim").classList.contains("open")&&curTab!=="sync") buildEditing(curTab); },
+  // one view-only screen per child, showing only that child
+  screens:s=>s.children.map(c=>({sub:childSub(c), label:kidName(c), avatar:c.avatar==="★"?"⭐":c.avatar})),
+  screenState:(s,sub)=>({children:s.children.filter(c=>childSub(c)===sub)}),
   btn:{primary:"btn primary",ghost:"btn ghost",danger:"btn warn"},
   isChild:IS_CHILD, childWord:"child", childShows:"the point total, the prize jar, and how close each prize is",
   toast:m=>toast(m)
@@ -612,6 +869,10 @@ const SYNC_APP={
    only let a phone that proves it knows the family code write there —
    so the child's screen can look, but it can't add, take away, or
    change anything, even if someone edits the link.
+   v1.2 — one screen per child: an app with several children lists them
+   in SYNC_APP.screens; each child's screen gets its own link and shows
+   only that child (SYNC_APP.screenState). Apps without SYNC_APP.screens
+   behave exactly as v1.1, and their existing links keep working.
    ===================================================================== */
 const PBHSync=(()=>{
   const A=SYNC_APP, FBV="10.12.2", CFG="pbh-sync-config.js", MK=A.localKey+":sync";
@@ -629,9 +890,9 @@ const PBHSync=(()=>{
   /* the child's copy never carries a PIN (any key named "pin", at any depth) */
   function redact(x){ if(Array.isArray(x)) return x.map(redact); if(!isObj(x)) return x; const o={}; for(const k of Object.keys(x)) if(k!=="pin") o[k]=redact(x[k]); return o; }
   /* screen id = SHA-256 of the family code + app. One-way: the id can't be turned back into the code. */
-  async function screenId(code){
+  async function screenId(code,sub){
     if(!(window.crypto&&crypto.subtle)) throw err("insecure");
-    const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("pbh-view:"+norm(code)+":"+A.id));
+    const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("pbh-view:"+norm(code)+":"+A.id+(sub?":"+sub:"")));
     return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("");
   }
 
@@ -863,62 +1124,88 @@ const PBHSync=(()=>{
     }
   }
 
-  /* ---------- child's view-only screen (parents' phones keep it current) ---------- */
-  let mirT=null, mirBusy=false, mirAgain=false, scrEl=null;
-  const scr={on:null,err:"",id:"",busy:false};
+  /* ---------- child's view-only screen(s) (parents' phones keep them current) ---------- */
+  // sub "" is the one screen a v1.1 app has; other subs are extra children (see SYNC_APP.screens)
+  const SCREENS=st=>{ try{ const l=A.screens&&st?A.screens(st):null; if(Array.isArray(l)&&l.length) return l; }catch(e){} return [{sub:"",label:""}]; };
+  const SCRSTATE=(st,sub)=>A.screenState?A.screenState(st,sub):st;
+  let mirT=null, mirBusy=false, mirAgain=false, scrEl=null, scrBusy=false;
+  const scrs={};                                       // sub → {on,err,id}
+  const scrOf=sub=>scrs[sub]||(scrs[sub]={on:null,err:"",id:""});
   function mirrorSoon(ms){ if(!meta.code||meta.viewOnly) return; clearTimeout(mirT); mirT=setTimeout(mirror,ms==null?600:ms); }
-  async function ensureKey(v){                       // one-time: this phone proves it knows the family code (stored where no phone can read it)
-    const u=await auth();
-    if(meta.key===u.uid+":"+v) return;
-    try{ await screenDoc(v).collection("keys").doc(u.uid).set({code:meta.code,app:A.id}); }
+  async function ensureKey(v,sub){                   // one-time: this phone proves it knows the family code (stored where no phone can read it)
+    const u=await auth(), tag=u.uid+":"+v;
+    if(meta.key===tag||(isObj(meta.keys)&&meta.keys[tag])) return;
+    const k={code:meta.code,app:A.id}; if(sub) k.sub=sub;
+    try{ await screenDoc(v).collection("keys").doc(u.uid).set(k); }
     catch(e){ if(!(e&&e.code==="permission-denied")) throw e; }   // already registered on an earlier visit (keys can't be rewritten)
-    meta.key=u.uid+":"+v; saveMeta();
+    if(!isObj(meta.keys)) meta.keys={}; meta.keys[tag]=1; saveMeta();
   }
   const scrWhy=e=>e&&e.code==="permission-denied"?"Couldn't update the "+KID+"'s screen. (Site owner: publish the latest firestore.rules.)":why(e);
   async function mirror(){
     if(!meta.code||meta.viewOnly||!meta.base||!navigator.onLine) return;
     if(mirBusy){ mirAgain=true; return; }
     mirBusy=true;
+    try{ await fb(); for(const x of SCREENS(meta.base)) await mirrorOne(x.sub); }
+    catch(e){}
+    finally{ mirBusy=false; if(mirAgain){ mirAgain=false; mirrorSoon(300); } }
+  }
+  async function mirrorOne(sub){
+    const S=scrOf(sub);
     try{
-      await fb(); const v=await screenId(meta.code); scr.id=v;
+      const v=await screenId(meta.code,sub); S.id=v;
       const r=screenDoc(v), s=await r.get({source:"server"});
-      if(!s.exists){ setScr(false,""); return; }         // no child's screen in this family — nothing to do
+      if(!s.exists){ setScr(sub,false,""); return; }     // no screen for this child — nothing to do
       const rev=meta.rev||0;
-      if((+s.data().rev||0)>=rev){ setScr(true,""); return; }
-      await ensureKey(v);
-      const st=redact(cl(meta.base));
+      if((+s.data().rev||0)>=rev){ setScr(sub,true,""); return; }
+      await ensureKey(v,sub);
+      const st=redact(cl(SCRSTATE(meta.base,sub)));
       await db.runTransaction(async tx=>{ const x=await tx.get(r);
         if(!x.exists||(+x.data().rev||0)>=rev) return;     // turned off meanwhile, or another parent's phone already sent this
         tx.set(r,{state:st,app:A.id,rev,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); });
-      setScr(true,"");
-    }catch(e){ setScr(scr.on,scrWhy(e)); }
-    finally{ mirBusy=false; if(mirAgain){ mirAgain=false; mirrorSoon(300); } }
+      setScr(sub,true,"");
+    }catch(e){ setScr(sub,S.on,scrWhy(e)); }
   }
-  async function screenOn(){
-    await fb(); const v=await screenId(meta.code); scr.id=v; await ensureKey(v);
-    await screenDoc(v).set({state:redact(cl(meta.base||A.get())),app:A.id,rev:meta.rev||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  async function screenOn(sub){
+    await fb(); const v=await screenId(meta.code,sub); scrOf(sub).id=v; await ensureKey(v,sub);
+    await screenDoc(v).set({state:redact(cl(SCRSTATE(meta.base||A.get(),sub))),app:A.id,rev:meta.rev||0,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
   }
-  async function screenOff(){ await fb(); const v=await screenId(meta.code); await ensureKey(v); await screenDoc(v).delete(); }
-  function setScr(on,e){ scr.on=on; scr.err=e||""; paintScr(); }
+  async function screenOff(sub){ await fb(); const v=await screenId(meta.code,sub); await ensureKey(v,sub); await screenDoc(v).delete(); }
+  /* a child was removed from the app: take their screen down too (best effort; nothing to do when not syncing) */
+  async function dropScreen(sub){
+    if(!meta.code||meta.viewOnly||!navigator.onLine) return;
+    try{ await fb(); const v=await screenId(meta.code,sub), s=await screenDoc(v).get({source:"server"}); if(s.exists) await screenOff(sub); }catch(e){}
+    delete scrs[sub]; paintScr();
+  }
+  function setScr(sub,on,e){ const S=scrOf(sub); S.on=on; S.err=e||""; paintScr(); }
   function paintScr(){
     const el=scrEl; if(!el||!el.isConnected) return;
-    const B=A.btn;
-    let x='<label class="pbhs-lab">'+h(KIDC)+'\'s screen (view only)</label>'
-      +'<p class="pbhs-note">A live, look-but-don\'t-touch copy of '+h(A.childShows||"the total")+' for your '+h(KID)+'\'s iPhone, iPad, or iPod touch. It updates by itself when a parent taps, but it can\'t add, take away, or change anything — and it never gets your family code or PIN.</p>';
-    if(scr.on===null) x+='<p class="pbhs-note">Checking…</p>';
-    else if(!scr.on) x+='<button class="'+B.primary+' pbhs-full" id="pbhsScrOn">Set up '+h(KID)+'\'s screen</button>';
-    else x+='<div class="row pbhs-row"><button class="'+B.ghost+'" id="pbhsScrCopy">Copy link</button><button class="'+B.primary+'" id="pbhsScrSend">Send '+h(KID)+' link</button></div>'
-      +'<p class="pbhs-note">Open the link on your '+h(KID)+'\'s device in Safari, then tap Share → Add to Home Screen.</p>'
-      +'<button class="'+B.ghost+' pbhs-full" id="pbhsScrOff">Turn off '+h(KID)+'\'s screen</button>';
-    if(scr.err) x+='<div class="pbhs-err" style="margin-top:10px">'+h(scr.err)+'</div>';
+    const B=A.btn, list=SCREENS(meta.base||A.get()), many=list.length>1;
+    let x='<label class="pbhs-lab">'+(many?'Each '+h(KID)+'\'s screen (view only)':h(KIDC)+'\'s screen (view only)')+'</label>'
+      +'<p class="pbhs-note">A live, look-but-don\'t-touch copy of '+h(A.childShows||"the total")+' for your '+h(KID)+'\'s iPhone, iPad, or iPod touch. It updates by itself when a parent taps, but it can\'t add, take away, or change anything — and it never gets your family code or PIN.'
+      +(many?' Each '+h(KID)+' gets their own link, and it shows only their own.':'')+'</p>';
+    list.forEach((it,i)=>{
+      const S=scrOf(it.sub), who=many?h(it.label||KIDC):h(KID), whoC=many?h(it.label||KIDC):h(KIDC);
+      if(many) x+='<div class="pbhs-scr"><div class="pbhs-scrname">'+(it.avatar?h(it.avatar)+' ':'')+whoC+'</div>';
+      if(S.on===null) x+='<p class="pbhs-note">Checking…</p>';
+      else if(!S.on) x+='<button class="'+B.primary+' pbhs-full" data-act="on" data-i="'+i+'">Set up '+who+'\'s screen</button>';
+      else x+='<div class="row pbhs-row"><button class="'+B.ghost+'" data-act="copy" data-i="'+i+'">Copy link</button><button class="'+B.primary+'" data-act="send" data-i="'+i+'">Send '+who+' link</button></div>'
+        +(many?'':'<p class="pbhs-note">Open the link on your '+h(KID)+'\'s device in Safari, then tap Share → Add to Home Screen.</p>')
+        +'<button class="'+B.ghost+' pbhs-full" data-act="off" data-i="'+i+'">Turn off '+who+'\'s screen</button>';
+      if(S.err) x+='<div class="pbhs-err" style="margin-top:10px">'+h(S.err)+'</div>';
+      if(many) x+='</div>';
+    });
+    if(many) x+='<p class="pbhs-note">Open each link on that '+h(KID)+'\'s device in Safari, then tap Share → Add to Home Screen.</p>';
     el.innerHTML=x+'<div style="height:16px"></div>';
-    const link=location.origin+location.pathname+"?view=child&screen="+scr.id;
-    const busy=(b,fn)=>async()=>{ if(scr.busy) return; scr.busy=true; b.disabled=true; b.textContent="Working…";
-      try{ await fn(); }catch(e){ scr.err=scrWhy(e); } finally{ scr.busy=false; paintScr(); } };
-    const on=el.querySelector("#pbhsScrOn"); if(on) on.onclick=busy(on,async()=>{ await screenOn(); setScr(true,""); A.toast(KIDC+"'s screen is on — now send the link"); });
-    const cp=el.querySelector("#pbhsScrCopy"); if(cp) cp.onclick=()=>copy(link,KIDC+" link copied");
-    const sd=el.querySelector("#pbhsScrSend"); if(sd) sd.onclick=()=>share(link,"Your "+A.name+" — live view:",KIDC+" link copied");
-    const off=el.querySelector("#pbhsScrOff"); if(off) off.onclick=()=>{ if(confirm("Turn off the "+KID+"'s screen? It stops updating and shows a \"not switched on\" message. Turning it back on later uses the same link.")) busy(off,async()=>{ await screenOff(); setScr(false,""); A.toast(KIDC+"'s screen turned off"); })(); };
+    el.querySelectorAll("[data-act]").forEach(b=>{
+      const it=list[+b.dataset.i], sub=it.sub, S=scrOf(sub), nm=many?(it.label||KIDC):KIDC, link=location.origin+location.pathname+"?view=child&screen="+S.id;
+      const busy=fn=>async()=>{ if(scrBusy) return; scrBusy=true; b.disabled=true; b.textContent="Working…";
+        try{ await fn(); }catch(e){ S.err=scrWhy(e); } finally{ scrBusy=false; paintScr(); } };
+      const act=b.dataset.act;
+      if(act==="on") b.onclick=busy(async()=>{ await screenOn(sub); setScr(sub,true,""); A.toast(nm+"'s screen is on — now send the link"); });
+      else if(act==="copy") b.onclick=()=>copy(link,nm+" link copied");
+      else if(act==="send") b.onclick=()=>share(link,(many?nm+"'s ":"Your ")+A.name+" — live view:",nm+" link copied");
+      else if(act==="off") b.onclick=()=>{ if(confirm("Turn off "+(many?nm+"'s":"the "+KID+"'s")+" screen? It stops updating and shows a \"not switched on\" message. Turning it back on later uses the same link.")) busy(async()=>{ await screenOff(sub); setScr(sub,false,""); A.toast(nm+"'s screen turned off"); })(); };
+    });
   }
 
   /* ---------- start / join / leave ---------- */
@@ -956,7 +1243,7 @@ const PBHSync=(()=>{
     start(code,L,false,nrev); return {joined:true,replaced:true};
   }
   function leave(){
-    if(unsub){ unsub(); unsub=null; } clearTimeout(pushT); clearTimeout(retryT); clearTimeout(mirT); ref=null; scr.on=null; scr.err=""; scr.id="";
+    if(unsub){ unsub(); unsub=null; } clearTimeout(pushT); clearTimeout(retryT); clearTimeout(mirT); ref=null; for(const k of Object.keys(scrs)) delete scrs[k];
     meta={}; saveMeta(); status="off"; msg=""; paint(); repaint();
     try{ const q=new URLSearchParams(location.search); if(q.has("family")){ q.delete("family"); const t=q.toString(); history.replaceState(null,"",location.pathname+(t?"?"+t:"")+location.hash); } }catch(e){}
   }
@@ -1081,6 +1368,8 @@ const PBHSync=(()=>{
     if(booted) return; booted=true;
     // v1.0 teen screens joined with the family code itself; move them to the read-only copy and forget the code
     if(meta.code&&meta.viewOnly){ try{ meta={screen:await screenId(meta.code),viewOnly:true,rev:0,since:meta.since||Date.now()}; saveMeta(); }catch(e){} }
+    // the last agreed copy is compared with the app's current shape — bring one saved by an older version up to date
+    if(isObj(meta.base)){ try{ meta.base=A.normalize(cl(meta.base)); saveMeta(); }catch(e){} }
     paint();
     addEventListener("online",()=>{ if(!joined()) return; if(!unsub) connect(); else if(meta.dirty) later(500); });
     addEventListener("offline",()=>{ if(joined()) setStatus("offline"); });
@@ -1092,7 +1381,7 @@ const PBHSync=(()=>{
   /* called by the app's own save() — the only hook into the app */
   function changed(){ if(!meta.code||meta.viewOnly) return; if(!meta.dirty){ meta.dirty=true; saveMeta(); } later(400); paint(); }
 
-  return {boot,changed,panel,leave,
+  return {boot,changed,panel,leave,dropScreen,
     get joined(){ return joined(); }, get viewOnly(){ return !!meta.viewOnly; }, get screen(){ return !!meta.screen; }, get status(){ return status; },
     _t:{merge3,patch,deq}};
 })();
@@ -1100,7 +1389,8 @@ const PBHSync=(()=>{
 /* ---------- init ---------- */
 (async function init(){
   const saved=await store.get();
-  state = saved && saved.behaviors ? Object.assign({},DEFAULT,saved) : JSON.parse(JSON.stringify(DEFAULT));
+  state = normalize(saved||DEFAULT);
+  if(saved&&!Array.isArray(saved.children)) store.set(state);   // one-time upgrade of a v1 (one-child) save
   renderAll();
   PBHSync.boot();
 })();

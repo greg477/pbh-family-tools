@@ -1,7 +1,7 @@
 rules_version = '2';
 
 // =====================================================================
-// PBH Family Sync — Firestore security rules (v1.1)
+// PBH Family Sync — Firestore security rules (v1.2)
 // © 2026 Greg Snyder, Ph.D. · Perspective Behavioral Health
 // ---------------------------------------------------------------------
 // Paste this whole file into Firebase console → Firestore Database →
@@ -27,6 +27,10 @@ rules_version = '2';
 //    Only a signed-in phone that has proven it knows the family code
 //    (views/<id>/keys/<its uid>, which no phone can ever read back) can
 //    update it — and the copy may not contain a PIN.
+//  • v1.2: an app with several children can have one screen per child.
+//    That screen's id also hashes in the child's short id ("sub"), so
+//    each child's link opens only that child's screen. v1.1 screens
+//    (no sub) work exactly as before.
 // =====================================================================
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -78,16 +82,25 @@ service cloud.firestore {
       allow delete:         if validView(v) && request.auth != null && exists(keyPath(v));
 
       // A parent phone's one-time proof that it knows the family code.
-      // The screen id must equal SHA-256("pbh-view:" + code + ":" + app).
+      // The screen id must equal SHA-256("pbh-view:" + code + ":" + app),
+      // or, for one child's screen, SHA-256("pbh-view:" + code + ":" + app + ":" + sub).
       // Never readable, never changeable — so the code can't leak from here.
       match /keys/{uid} {
         allow create: if validView(v)
                       && request.auth != null && request.auth.uid == uid
-                      && request.resource.data.keys().hasOnly(['code', 'app'])
+                      && request.resource.data.keys().hasOnly(['code', 'app', 'sub'])
                       && validCode(request.resource.data.code)
                       && validApp(request.resource.data.app)
                       && familyOk(request.resource.data.code)
-                      && hashing.sha256('pbh-view:' + request.resource.data.code + ':' + request.resource.data.app).toHexString().lower() == v;
+                      && (
+                        (!('sub' in request.resource.data)
+                          && hashing.sha256('pbh-view:' + request.resource.data.code + ':' + request.resource.data.app).toHexString().lower() == v)
+                        ||
+                        (('sub' in request.resource.data)
+                          && request.resource.data.sub is string
+                          && request.resource.data.sub.matches('^[a-z0-9]{1,12}$')
+                          && hashing.sha256('pbh-view:' + request.resource.data.code + ':' + request.resource.data.app + ':' + request.resource.data.sub).toHexString().lower() == v)
+                      );
       }
     }
 
