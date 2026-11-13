@@ -19,8 +19,9 @@
 <style>
   :root{
     --bg:#121829; --bg2:#182038; --panel:#1F2843; --panel-hi:#2A3556; --line:rgba(255,255,255,.08);
-    --text:#EEF6F3; --muted:#9FB0C8;
+    --text:#EEF2FA; --muted:#9FB0C8;
     --money:#7DB4F5; --money-deep:#2F5FA8; --money-wash:rgba(125,180,245,.12);
+    --mint:#AEE1D2; --mint-deep:#3AA7A3;   /* mint: the accent for bonuses and money coming back */
     --fine:#FBBF24; --fine-deep:#B45309;
     --viol:#FB7185; --viol-deep:#9F1239;
     --shadow:0 14px 40px rgba(0,0,0,.5);
@@ -37,13 +38,13 @@
 
   .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
   .who{display:flex;align-items:center;gap:9px;overflow:hidden;}
-  .who .nm{font-family:"Figtree";font-weight:600;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .who .nm{font-family:"Caveat","Figtree",cursive; font-weight:700; font-size:1.9rem; line-height:1; color:#9CC3F7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .weekpill{font-size:.76rem;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:4px 10px;border-radius:999px;white-space:nowrap;}
   .gear{background:var(--panel);border:1px solid var(--line);color:var(--muted);width:44px;height:44px;border-radius:13px;font-size:1.2rem;display:grid;place-items:center;cursor:pointer;flex:0 0 auto;}
   .gear:active{transform:scale(.94);}
   .synced{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
   .synced .d{width:7px;height:7px;border-radius:50%;background:var(--muted);}
-  .synced.live .d{background:var(--money);box-shadow:0 0 8px var(--money);}
+  .synced.live .d{background:var(--mint);box-shadow:0 0 8px var(--mint);}
 
   /* balance hero */
   .hero{position:relative;border-radius:22px;padding:24px 22px 20px;margin-bottom:14px;overflow:hidden;
@@ -56,10 +57,10 @@
   .ofbase{font-size:.9rem;color:var(--muted);}
   .fx{position:absolute;inset:0;pointer-events:none;overflow:visible;}
   .float{position:absolute;left:22px;top:52px;font-family:"Space Mono";font-weight:700;font-size:1.4rem;padding:2px 10px;border-radius:8px;animation:fl 1.1s ease-out forwards;}
-  .float.up{color:#0B1A33;background:var(--money);} .float.down{color:#2a1400;background:var(--fine);}
+  .float.up{color:#0E2E2A;background:var(--mint);} .float.down{color:#2a1400;background:var(--fine);}
   @keyframes fl{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-40px)}}
   .barwrap{height:11px;background:rgba(0,0,0,.35);border-radius:999px;overflow:hidden;margin:14px 0 6px;border:1px solid var(--line);}
-  .bar{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,var(--money-deep),var(--money));transition:width .45s ease;}
+  .bar{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,var(--money-deep),var(--money) 70%,var(--mint));transition:width .45s ease;}
   .bar.mid{background:linear-gradient(90deg,var(--fine-deep),var(--fine));}
   .bar.low{background:linear-gradient(90deg,var(--viol-deep),var(--viol));}
 
@@ -78,19 +79,19 @@
   .tgroup.five::after{content:"";position:absolute;left:-3px;right:-3px;top:50%;height:2.5px;background:var(--viol);transform:rotate(-18deg);border-radius:2px;}
   .tzero{color:var(--muted);font-size:.9rem;}
 
-  .lbl{font-size:.74rem;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;color:var(--muted);margin:6px 4px 11px;display:flex;align-items:center;gap:10px;}
+  .lbl{font-family:"Caveat","Figtree",cursive;font-size:1.65rem;line-height:1;font-weight:700;color:#9CC3F7;margin:10px 4px 11px;display:flex;align-items:center;gap:10px;}
   .lbl::after{content:"";flex:1;height:1px;background:var(--line);}
-  .lbl.viol{color:var(--viol);} .lbl.bonus{color:var(--money);}
+  .lbl.viol{color:var(--viol);} .lbl.bonus{color:var(--mint);}
 
   .list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
   .item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px 14px;cursor:pointer;transition:transform .08s;text-align:left;color:var(--text);}
   .item:active{transform:scale(.985);}
   .item.violitem{border-left:3px solid var(--viol);}
-  .item.bonusitem{border-left:3px solid var(--money);}
+  .item.bonusitem{border-left:3px solid var(--mint);}
   .item .emoji{font-size:1.3rem;width:28px;text-align:center;flex:0 0 auto;}
   .item .nm{flex:1;font-weight:500;font-size:.98rem;line-height:1.25;}
   .item .amt{font-family:"Space Mono";font-weight:700;font-size:1rem;}
-  .item.violitem .amt{color:var(--viol);} .item.bonusitem .amt{color:var(--money);}
+  .item.violitem .amt{color:var(--viol);} .item.bonusitem .amt{color:var(--mint);}
   .empty{color:var(--muted);text-align:center;padding:16px;font-size:.92rem;}
 
   .actlog{display:flex;flex-direction:column;}
@@ -100,7 +101,7 @@
   .logrow .lt .tx{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .logrow .when{color:var(--muted);font-size:.74rem;}
   .logrow .d{font-family:"Space Mono";font-weight:700;font-size:.92rem;flex:0 0 auto;}
-  .logrow .d.plus{color:var(--money);} .logrow .d.minus{color:var(--fine);} .logrow .d.stick{color:var(--viol);}
+  .logrow .d.plus{color:var(--mint);} .logrow .d.minus{color:var(--fine);} .logrow .d.stick{color:var(--viol);}
   .undo{margin:10px auto 0;display:block;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-family:inherit;font-weight:600;font-size:.9rem;padding:9px 18px;border-radius:11px;cursor:pointer;}
   .undo:active{transform:scale(.97);}
 
@@ -163,7 +164,7 @@
 .pbhs-pill{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;letter-spacing:.2px;padding:5px 10px;border-radius:999px;background:#1F2843;border:1px solid rgba(255,255,255,.08);color:#9FB0C8;white-space:nowrap;}
 .pbhs-pill[hidden],.pbhs-err[hidden]{display:none!important;}
 .pbhs-pill .d,.pbhs-status .d{width:8px;height:8px;border-radius:50%;background:#9FB0C8;flex:0 0 auto;}
-.pbhs-pill.live .d,.pbhs-status.live .d{background:#7DB4F5;box-shadow:0 0 6px #7DB4F5;}
+.pbhs-pill.live .d,.pbhs-status.live .d{background:#AEE1D2;box-shadow:0 0 6px #AEE1D2;}
 .pbhs-pill.offline .d,.pbhs-status.offline .d{background:#FBBF24;}
 .pbhs-pill.error .d,.pbhs-status.error .d{background:#FB7185;}
 .pbhs-pill.connecting .d,.pbhs-status.connecting .d{background:#FBBF24;animation:pbhsPulse 1s infinite;}
