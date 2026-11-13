@@ -12,28 +12,30 @@
 <title>Family Behavior Tools — Perspective Behavioral Health</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --paper:#F7F3EC; --paper2:#FFFFFF; --ink:#2A2440; --ink-soft:#6A6480; --line:#E7E0D4;
-    --shadow:0 10px 34px rgba(60,50,40,.10); --shadow-sm:0 4px 14px rgba(60,50,40,.08);
-    /* tool accents */
-    --jar:#F2991B; --jar-bg:#FBF0DD; --jar-ink:#6E3BA0;
-    --game:#0E7490; --game-bg:#E2F5FA; --game-ink:#0E7490;
-    --allow:#047857; --allow-bg:#E3F5EC; --allow-ink:#047857;
+    /* Perspective Behavioral Health: navy ink and actions, blue accents, cool blue-grey grounds (from the logo) */
+    --paper:#F5F8FC; --paper2:#FFFFFF; --ink:#1E2640; --ink-soft:#4A5570; --line:#D9E2EF;
+    --action:#1E2640; --action-deep:#0F1426; --accent:#2F5FA8; --accent-soft:#C3D4EE; --wash:#EEF3FA;
+    --shadow:0 10px 34px rgba(30,38,64,.08); --shadow-sm:0 4px 14px rgba(30,38,64,.06);
+    /* tool accents: one brand action colour; each tool keeps its own motif ground */
+    --jar:#F2991B; --jar-bg:#FFF6E3; --jar-ink:#2F5FA8;
+    --game:#2F5FA8; --game-bg:#E4ECF7; --game-ink:#2F5FA8;
+    --allow:#2F5FA8; --allow-bg:#EEF3FA; --allow-ink:#2F5FA8;
   }
   *{box-sizing:border-box;}
   html{-webkit-text-size-adjust:100%; scroll-behavior:smooth;}
   body{margin:0; background:var(--paper); color:var(--ink);
-    font-family:"Inter",system-ui,sans-serif; font-size:17px; line-height:1.6;
-    background-image:radial-gradient(90% 50% at 50% -5%, #FFFDF8 0%, transparent 60%);}
+    font-family:"Figtree",system-ui,sans-serif; font-size:17px; line-height:1.6;
+    background-image:linear-gradient(180deg, #FFFFFF 0%, var(--paper) 420px);}
   .wrap{max-width:960px; margin:0 auto; padding:30px 22px 70px;}
-  .serif{font-family:"Fraunces",Georgia,serif;}
+  .script{font-family:"Caveat","Figtree",cursive;}
 
   /* header */
   header{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:34px;}
   .brand{display:flex; align-items:center; gap:12px;}
-  .logo{width:46px; height:46px; border-radius:13px; background:linear-gradient(145deg,#6E3BA0,#9B6AD1); display:grid; place-items:center; color:#fff; font-family:"Fraunces"; font-weight:700; font-size:1.3rem; box-shadow:var(--shadow-sm); flex:0 0 auto;}
+  .logo{width:46px; height:46px; border-radius:13px; background:linear-gradient(145deg,#1E2640,#2F5FA8); display:grid; place-items:center; color:#fff; font-family:"Fraunces"; font-weight:700; font-size:1.3rem; box-shadow:var(--shadow-sm); flex:0 0 auto;}
   .brand .bt{font-weight:700; font-size:1.02rem; line-height:1.2;}
   .brand .bs{font-size:.84rem; color:var(--ink-soft);}
   .headlink{font-size:.9rem; color:var(--ink-soft); text-decoration:none; font-weight:600;}
@@ -41,14 +43,15 @@
 
   /* hero */
   .hero{margin-bottom:44px; max-width:680px;}
-  .eyebrow{font-weight:700; font-size:.82rem; letter-spacing:.5px; color:var(--jar); margin-bottom:12px;}
-  h1{font-family:"Fraunces"; font-weight:600; font-size:2.9rem; line-height:1.08; margin:0 0 16px; letter-spacing:-.5px;}
+  .eyebrow{font-weight:800; font-size:.8rem; letter-spacing:.12em; color:var(--accent); margin-bottom:12px;}
+  h1{font-family:"Figtree"; font-weight:800; font-size:2.9rem; line-height:1.08; margin:0 0 16px; letter-spacing:-.5px; text-wrap:balance;}
+  h1 .script{font-weight:700; font-size:1.18em; color:var(--accent); letter-spacing:0;}
   .hero p{font-size:1.18rem; color:var(--ink-soft); margin:0;}
   .hero .pillrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:20px;}
   .pill{font-size:.82rem; font-weight:600; background:var(--paper2); border:1px solid var(--line); border-radius:999px; padding:7px 14px; box-shadow:var(--shadow-sm);}
-  .pill .d{color:var(--allow);}
+  .pill .d{color:var(--accent);}
 
-  .progress-note{font-size:.84rem; color:var(--ink-soft); font-weight:600; letter-spacing:.3px; text-transform:uppercase; margin:0 0 16px; display:flex; align-items:center; gap:10px;}
+  .progress-note{font-family:"Caveat","Figtree",cursive; font-size:1.9rem; line-height:1; color:var(--accent); font-weight:700; margin:0 0 16px; display:flex; align-items:center; gap:10px;}
   .progress-note::after{content:""; flex:1; height:1px; background:var(--line);}
 
   /* tool cards */
@@ -57,9 +60,9 @@
   .tool .motif{position:relative; display:grid; place-items:center; padding:22px;}
   .tool.t-jar .motif{background:var(--jar-bg);} .tool.t-game .motif{background:var(--game-bg);} .tool.t-allow .motif{background:var(--allow-bg);}
   .tool .body{padding:22px 24px 22px 4px;}
-  .tool .age{font-size:.76rem; font-weight:700; letter-spacing:.6px; text-transform:uppercase; margin-bottom:6px;}
+  .tool .age{font-size:.76rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; margin-bottom:6px;}
   .t-jar .age{color:var(--jar-ink);} .t-game .age{color:var(--game-ink);} .t-allow .age{color:var(--allow-ink);}
-  .tool h2{font-family:"Fraunces"; font-weight:600; font-size:1.5rem; margin:0 0 6px;}
+  .tool h2{font-family:"Figtree"; font-weight:800; font-size:1.45rem; margin:0 0 6px;}
   .tool .desc{color:var(--ink-soft); font-size:.98rem; margin:0 0 10px;}
   .tool .mech{font-size:.92rem; margin:0 0 16px;}
   .tool .mech b{font-weight:700;}
@@ -67,29 +70,30 @@
   .btn{display:inline-flex; align-items:center; gap:7px; text-decoration:none; font-weight:700; font-size:.94rem; padding:11px 18px; border-radius:12px; border:2px solid transparent; transition:transform .08s;}
   .btn:active{transform:scale(.97);}
   .btn .ic{font-size:1rem;}
-  .t-jar .btn.go{background:var(--jar); color:#fff;} .t-game .btn.go{background:var(--game); color:#fff;} .t-allow .btn.go{background:var(--allow); color:#fff;}
+  .btn.go{background:var(--action); color:#fff;} .btn.go:hover{background:var(--accent);}
   .btn.dl{background:var(--paper2); color:var(--ink); border-color:var(--line);}
-  .btn.dl:hover{border-color:var(--ink-soft);}
+  .btn.dl:hover{border-color:var(--accent);}
+  .btn:focus-visible,.headlink:focus-visible{outline:3px solid var(--accent); outline-offset:2px;}
 
   /* motifs */
   .m-jar{width:66px; height:84px; position:relative;}
-  .m-jar .lid{position:absolute; top:0; left:50%; transform:translateX(-50%); width:44px; height:11px; background:#CBA9DC; border:2px solid #fff; border-radius:5px;}
+  .m-jar .lid{position:absolute; top:0; left:50%; transform:translateX(-50%); width:44px; height:11px; background:var(--accent-soft); border:2px solid #fff; border-radius:5px;}
   .m-jar .gl{position:absolute; top:9px; left:50%; transform:translateX(-50%); width:58px; height:74px; border:3px solid rgba(255,255,255,.9); border-radius:10px 10px 16px 16px; background:rgba(255,255,255,.4); overflow:hidden;}
   .m-jar .fl{position:absolute; bottom:0; left:0; right:0; height:62%; background:linear-gradient(180deg,#FFE9A8,var(--jar));}
   .m-jar .c{position:absolute; width:11px; height:11px; border-radius:50%; background:radial-gradient(circle at 34% 30%,#FFF4CC,var(--jar)); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4);}
   .m-game{width:72px; height:76px; display:flex; flex-direction:column; align-items:center; gap:7px;}
-  .m-game .scr{width:72px; height:48px; border-radius:9px; background:#0B3A46; border:3px solid #fff; box-shadow:var(--shadow-sm); position:relative; overflow:hidden;}
-  .m-game .scr .t{position:absolute; inset:7px; border-radius:4px; background:linear-gradient(135deg,#22D3EE,#0E7490); display:grid; place-items:center; color:#042; font-family:"Fraunces"; font-weight:700; font-size:.8rem; color:#eafdff;}
-  .m-game .bar{width:66px; height:9px; border-radius:6px; background:#CDE9F0; overflow:hidden;}
-  .m-game .bar .f{height:100%; width:64%; background:linear-gradient(90deg,#0E7490,#22D3EE);}
+  .m-game .scr{width:72px; height:48px; border-radius:9px; background:#1E2640; border:3px solid #fff; box-shadow:var(--shadow-sm); position:relative; overflow:hidden;}
+  .m-game .scr .t{position:absolute; inset:7px; border-radius:4px; background:linear-gradient(135deg,#7DB4F5,#2F5FA8); display:grid; place-items:center; color:#042; font-family:"Figtree"; font-weight:700; font-size:.8rem; color:#eafdff;}
+  .m-game .bar{width:66px; height:9px; border-radius:6px; background:#D6E4F7; overflow:hidden;}
+  .m-game .bar .f{height:100%; width:64%; background:linear-gradient(90deg,#2F5FA8,#7DB4F5);}
   .m-allow{width:78px; height:78px; display:grid; place-items:center;}
   .m-allow .coins{position:relative; width:64px; height:64px;}
-  .m-allow .cn{position:absolute; left:8px; width:48px; height:14px; border-radius:50%; background:linear-gradient(180deg,#6EE7B7,var(--allow)); border:2px solid #fff; box-shadow:var(--shadow-sm);}
-  .m-allow .cn b{position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-family:"Fraunces"; font-weight:700; font-size:.72rem;}
+  .m-allow .cn{position:absolute; left:8px; width:48px; height:14px; border-radius:50%; background:linear-gradient(180deg,#B7CAE8,var(--accent)); border:2px solid #fff; box-shadow:var(--shadow-sm);}
+  .m-allow .cn b{position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-family:"Figtree"; font-weight:700; font-size:.72rem;}
 
   /* how-to */
   .howto{background:var(--paper2); border:1px solid var(--line); border-radius:22px; padding:26px 26px 22px; box-shadow:var(--shadow-sm); margin-bottom:40px;}
-  .howto h3{font-family:"Fraunces"; font-weight:600; font-size:1.3rem; margin:0 0 4px;}
+  .howto h3{font-family:"Caveat","Figtree",cursive; font-weight:700; font-size:2rem; line-height:1; color:var(--accent); margin:0 0 6px;}
   .howto .hsub{color:var(--ink-soft); font-size:.95rem; margin:0 0 18px;}
   .steps{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
   .steps h4{margin:0 0 8px; font-size:1rem;}
@@ -98,8 +102,8 @@
 
   footer{border-top:1px solid var(--line); padding-top:24px; color:var(--ink-soft); font-size:.9rem;}
   footer .frow{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;}
-  .privacy{background:var(--allow-bg); border-radius:12px; padding:12px 16px; margin:0 0 20px; font-size:.92rem; color:#14563c;}
-  .privacy b{color:var(--allow);}
+  .privacy{background:var(--wash); border:1px solid var(--line); border-radius:12px; padding:12px 16px; margin:0 0 20px; font-size:.92rem; color:var(--ink);}
+  .privacy b{color:var(--accent);}
   .disc{font-size:.82rem; margin-top:14px;}
 
   @media (max-width:620px){
@@ -127,7 +131,7 @@
 
   <section class="hero">
     <div class="eyebrow">FREE · PRIVATE · RUNS ON YOUR PHONE</div>
-    <h1>Simple tools that make the good stuff add up.</h1>
+    <h1>Simple tools that make <span class="script">the good stuff</span> add up.</h1>
     <p>Three phone-based reward systems, each built for a different age — grounded in the same behavioral science we use every day, and designed to stay out of your way. Pick the one that fits your kid, add it to your home screen, and you're running in a minute.</p>
     <div class="pillrow">
       <span class="pill">⭐ Built on positive reinforcement</span>
